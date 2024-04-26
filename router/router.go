@@ -5,10 +5,10 @@ import (
 	"net/http"
 )
 
-type HandlerFunc func(http.ResponseWriter, *http.Request)
+type handlerFunc func(http.ResponseWriter, *http.Request)
 
 // RouterDict 路由字典
-var RouterDict = make(map[string]HandlerFunc)
+var RouterDict = make(map[string]handlerFunc)
 
 func Router() {
 	addEntry("/file/upload", handler.NewUploadHandler().Handler)
@@ -17,7 +17,7 @@ func Router() {
 }
 
 // 向全局字典中添加新的条目
-func addEntry(key string, value HandlerFunc) {
+func addEntry(key string, value handlerFunc) {
 	RouterDict[key] = value
 }
 
