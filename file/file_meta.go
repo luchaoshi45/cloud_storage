@@ -1,49 +1,49 @@
 package file
 
 type FileMeta struct {
-	sha1     string
-	name     string
-	size     int64
-	location string
-	uploadAt string
+	Sha1     string `json:"sha1"`
+	Name     string `json:"name"`
+	Size     int64  `json:"size"`
+	Location string `json:"location"`
+	UploadAt string `json:"uploadAt"`
 }
 
 func (fm *FileMeta) GetSha1() string {
-	return fm.sha1
+	return fm.Sha1
 }
 
 func (fm *FileMeta) SetSha1(sha1 string) {
-	fm.sha1 = sha1
+	fm.Sha1 = sha1
 }
 
 func (fm *FileMeta) GetName() string {
-	return fm.name
+	return fm.Name
 }
 
 func (fm *FileMeta) SetName(name string) {
-	fm.name = name
+	fm.Name = name
 }
 
 func (fm *FileMeta) GetSize() int64 {
-	return fm.size
+	return fm.Size
 }
 
 func (fm *FileMeta) SetSize(size int64) {
-	fm.size = size
+	fm.Size = size
 }
 
 func (fm *FileMeta) GetLocation() string {
-	return fm.location
+	return fm.Location
 }
 
 func (fm *FileMeta) SetLocation(location string) {
-	fm.location = location
+	fm.Location = location
 }
 
 func (fm *FileMeta) GetUploadAt() string {
-	return fm.uploadAt
+	return fm.UploadAt
 }
 
 func (fm *FileMeta) SetUploadAt(uploadAt string) {
-	fm.uploadAt = uploadAt
+	fm.UploadAt = uploadAt
 }

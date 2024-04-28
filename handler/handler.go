@@ -15,3 +15,8 @@ func NewUploadHandler() Handler {
 func NewUploadSuccessHandler() Handler {
 	return &uploadSuccess{}
 }
+
+// NewGetFileMetaHandler New GetFileMetaHandler 结构体
+func NewGetFileMetaHandler() Handler {
+	return &GetFileMetaHandler{}
+}

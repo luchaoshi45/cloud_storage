@@ -36,3 +36,7 @@ func GetFileMetaDict() map[string]AbstractFileMeta {
 func UpdateFileMetaDict(fileMate AbstractFileMeta) {
 	fileMetaDict[fileMate.GetSha1()] = fileMate
 }
+
+func GetFileMeta(sha1 string) AbstractFileMeta {
+	return fileMetaDict[sha1]
+}

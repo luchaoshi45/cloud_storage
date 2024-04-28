@@ -1,6 +1,9 @@
 ### 网址
 http://10.181.105.230:42200/file/upload
 
+http://10.181.105.230:42200/file/meta?sha1=
+
+
 ### 目录
 #### [handler](handler)    路由服务函数
 #### [router](router)    路由

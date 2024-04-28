@@ -21,10 +21,12 @@ func GetRouterDict() map[string]handlerFunc {
 	return routerDict
 }
 
+// Router 初始化
 func Router() {
 	GetRouterDict()
 	addEntry("/file/upload", handler.NewUploadHandler().Handler)
 	addEntry("/file/upload/success", handler.NewUploadSuccessHandler().Handler)
+	addEntry("/file/meta", handler.NewGetFileMetaHandler().Handler)
 	config()
 }
 
