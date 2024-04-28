@@ -1,19 +1,24 @@
 package main
 
 import (
+	"cloud_storage/file"
 	"cloud_storage/router"
 	"log"
 	"net/http"
 )
 
-func main() {
+func sysInit() {
+	// 文件系统
+	file.GetFileMetaDict() // 单例初始化
 	// 配置路由
 	router.Router()
-
 	// 设置监听的端口
 	err := http.ListenAndServe(":42200", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 
+func main() {
+	sysInit()
 }

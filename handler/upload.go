@@ -1,17 +1,16 @@
 package handler
 
 import (
+	"cloud_storage/file"
+	"cloud_storage/file/util"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 type UploadHandler struct {
-}
-
-func NewUploadHandler() Handler {
-	return &UploadHandler{}
 }
 
 func (uh *UploadHandler) Handler(w http.ResponseWriter, r *http.Request) {
@@ -44,30 +43,38 @@ func (uh *UploadHandler) showUploadPage(w http.ResponseWriter) {
 // receiveFile
 func (uh *UploadHandler) receiveFile(w http.ResponseWriter, r *http.Request) {
 	// 接收文件
-	file, head, err := r.FormFile("file")
-	defer file.Close()
+	f, head, err := r.FormFile("file")
 	if err != nil {
 		log.Println("r.FormFile(\"file\") ", err.Error())
 		return
 	}
+	defer f.Close()
 
-	// 定制文件 meta
-	// ...
+	// 文件 meta
+	newfileMeta := file.NewFileMeta()
+	newfileMeta.SetUploadAt(time.Now().Format("2006-01-02 15:04:05"))
+	newfileMeta.SetName(head.Filename)
+	newfileMeta.SetLocation("tmp/" + head.Filename)
 
 	// 本地创建文件
-	newFile, err := os.Create("tmp/" + head.Filename)
-	defer newFile.Close()
+	newFile, err := os.Create(newfileMeta.GetLocation())
 	if err != nil {
 		log.Println("os.Create(\"/tmp/\" + head.Filename) ", err.Error())
 		return
 	}
 
 	// copy 文件
-	_, err = io.Copy(newFile, file)
+	size, err := io.Copy(newFile, f)
 	if err != nil {
 		log.Println("io.Copy(newFile, file) ", err.Error())
 		return
 	}
+	newfileMeta.SetSize(size)
+	newFile.Seek(0, 0)
+	newfileMeta.SetSha1(util.FileSha1(newFile))
+
+	// 更新 fileMetaDict
+	file.UpdateFileMetaDict(newfileMeta)
 
 	// 上传成功 页面跳转
 	// 根据当前路由 重定向

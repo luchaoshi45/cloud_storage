@@ -10,10 +10,6 @@ import (
 type uploadSuccess struct {
 }
 
-func NewUploadSuccessHandler() Handler {
-	return &uploadSuccess{}
-}
-
 func (us *uploadSuccess) Handler(w http.ResponseWriter, r *http.Request) {
 	_, err := io.WriteString(w, "uploadSuccess")
 	if err != nil {
