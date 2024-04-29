@@ -13,7 +13,7 @@ func NewUploadHandler() Handler {
 
 // NewUploadSuccessHandler  New UploadSuccessHandler 结构体
 func NewUploadSuccessHandler() Handler {
-	return &uploadSuccess{}
+	return &UploadSuccess{}
 }
 
 // NewGetFileMetaHandler New GetFileMetaHandler 结构体
@@ -23,4 +23,8 @@ func NewGetFileMetaHandler() Handler {
 
 func NewDownloadHandler() Handler {
 	return &DownloadHandler{}
+}
+
+func NewUpdateFileMetaHandler() Handler {
+	return &UpdateFileMetaHandler{}
 }

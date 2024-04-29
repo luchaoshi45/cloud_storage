@@ -1,10 +1,12 @@
 package file
 
+import "path"
+
 type FileMeta struct {
 	Sha1     string `json:"sha1"`
 	Name     string `json:"name"`
+	Dir      string `json:"dir"`
 	Size     int64  `json:"size"`
-	Location string `json:"location"`
 	UploadAt string `json:"uploadAt"`
 }
 
@@ -24,6 +26,14 @@ func (fm *FileMeta) SetName(name string) {
 	fm.Name = name
 }
 
+func (fm *FileMeta) GetDir() string {
+	return fm.Dir
+}
+
+func (fm *FileMeta) SetDir(dir string) {
+	fm.Dir = dir
+}
+
 func (fm *FileMeta) GetSize() int64 {
 	return fm.Size
 }
@@ -33,11 +43,12 @@ func (fm *FileMeta) SetSize(size int64) {
 }
 
 func (fm *FileMeta) GetLocation() string {
-	return fm.Location
+	return path.Join(fm.GetDir(), fm.GetName())
 }
 
 func (fm *FileMeta) SetLocation(location string) {
-	fm.Location = location
+	fm.SetDir(path.Dir(location))
+	fm.SetName(path.Base(location))
 }
 
 func (fm *FileMeta) GetUploadAt() string {

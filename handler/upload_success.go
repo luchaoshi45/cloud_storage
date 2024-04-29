@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-// uploadSuccess 上传文件成功
-type uploadSuccess struct {
+// UploadSuccess 上传文件成功
+type UploadSuccess struct {
 }
 
-func (us *uploadSuccess) Handler(w http.ResponseWriter, r *http.Request) {
+func (us *UploadSuccess) Handler(w http.ResponseWriter, r *http.Request) {
 	_, err := io.WriteString(w, "uploadSuccess")
 	if err != nil {
 		log.Println("io.WriteString(w, \"uploadSuccess\") ", err.Error())

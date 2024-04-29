@@ -7,6 +7,8 @@ type AbstractFileMeta interface {
 	SetSha1(sha1 string)
 	GetName() string
 	SetName(name string)
+	GetDir() string
+	SetDir(dir string)
 	GetSize() int64
 	SetSize(size int64)
 	GetLocation() string
