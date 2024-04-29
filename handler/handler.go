@@ -20,3 +20,7 @@ func NewUploadSuccessHandler() Handler {
 func NewGetFileMetaHandler() Handler {
 	return &GetFileMetaHandler{}
 }
+
+func NewDownloadHandler() Handler {
+	return &DownloadHandler{}
+}

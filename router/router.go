@@ -27,6 +27,7 @@ func Router() {
 	addEntry("/file/upload", handler.NewUploadHandler().Handler)
 	addEntry("/file/upload/success", handler.NewUploadSuccessHandler().Handler)
 	addEntry("/file/meta", handler.NewGetFileMetaHandler().Handler)
+	addEntry("/file/download", handler.NewDownloadHandler().Handler)
 	config()
 }
 

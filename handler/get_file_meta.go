@@ -11,8 +11,8 @@ type GetFileMetaHandler struct {
 
 func (gfmh *GetFileMetaHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	hash := r.Form["sha1"][0]
-	fileMeta := file.GetFileMeta(hash)
+	sha1 := r.Form["sha1"][0]
+	fileMeta := file.GetFileMeta(sha1)
 	data, err := json.Marshal(fileMeta)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
