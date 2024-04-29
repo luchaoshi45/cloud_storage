@@ -1,6 +1,9 @@
 package file
 
-import "sync"
+import (
+	"os"
+	"sync"
+)
 
 type AbstractFileMeta interface {
 	GetSha1() string
@@ -41,4 +44,13 @@ func UpdateFileMetaDict(fileMate AbstractFileMeta) {
 
 func GetFileMeta(sha1 string) AbstractFileMeta {
 	return fileMetaDict[sha1]
+}
+
+var mutex sync.Mutex
+
+func SafeRename(oldpath, newpath string) error {
+	mutex.Lock()
+	defer mutex.Unlock()
+	err := os.Rename(oldpath, newpath)
+	return err
 }

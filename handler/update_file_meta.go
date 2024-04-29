@@ -4,7 +4,6 @@ import (
 	"cloud_storage/file"
 	"encoding/json"
 	"net/http"
-	"os"
 )
 
 type UpdateFileMetaHandler struct {
@@ -36,7 +35,7 @@ func (ufmh *UpdateFileMetaHandler) Handler(w http.ResponseWriter, r *http.Reques
 	// 更新 FileMetaDict
 	file.UpdateFileMetaDict(fileMeta)
 	// Rename File
-	err := os.Rename(oldLocation, fileMeta.GetLocation())
+	err := file.SafeRename(oldLocation, fileMeta.GetLocation())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
