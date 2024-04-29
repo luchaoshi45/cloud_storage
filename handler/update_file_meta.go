@@ -17,7 +17,7 @@ func (ufmh *UpdateFileMetaHandler) Handler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// 解析
+	// ParseForm
 	r.ParseForm()
 	opType := r.Form.Get("op")
 	if opType != "0" {
