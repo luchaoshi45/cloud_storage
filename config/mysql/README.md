@@ -59,7 +59,6 @@ flush privileges;
 create database fileserver default character set utf8mb4;
 
 ```
-### 登录MySQL从节点配置同步信息
 #### MySQL 从节配置
 ```
 # 主节对话框 查看状态
