@@ -1,6 +1,7 @@
 package file
 
 import (
+	"errors"
 	"os"
 	"sync"
 )
@@ -42,15 +43,41 @@ func UpdateFileMetaDict(fileMate AbstractFileMeta) {
 	fileMetaDict[fileMate.GetSha1()] = fileMate
 }
 
-func GetFileMeta(sha1 string) AbstractFileMeta {
-	return fileMetaDict[sha1]
+func checkKeyExist(sha1 string) error {
+	// 检查键是否存在
+	_, exists := fileMetaDict[sha1]
+	if !exists {
+		return errors.New("键不存在")
+	}
+	return nil
 }
 
-var mutex sync.Mutex
+func GetFileMeta(sha1 string) (AbstractFileMeta, error) {
+	// checkKeyExist
+	err := checkKeyExist(sha1)
+	if err != nil {
+		return nil, err
+	}
+	return fileMetaDict[sha1], nil
+}
+
+func RemoveFileMeta(sha1 string) error {
+	// checkKeyExist
+	err := checkKeyExist(sha1)
+	if err != nil {
+		return err
+	}
+	// 删除键值对
+	delete(fileMetaDict, sha1)
+	return nil
+}
 
 func SafeRename(oldpath, newpath string) error {
-	mutex.Lock()
-	defer mutex.Unlock()
 	err := os.Rename(oldpath, newpath)
+	return err
+}
+
+func SafeRemove(path string) error {
+	err := os.Remove(path)
 	return err
 }

@@ -26,8 +26,12 @@ func (ufmh *UpdateFileMetaHandler) Handler(w http.ResponseWriter, r *http.Reques
 	sha1 := r.Form.Get("sha1")
 	newFileName := r.Form.Get("name")
 
-	// 更新
-	fileMeta := file.GetFileMeta(sha1)
+	// 得到 fileMeta
+	fileMeta, err := file.GetFileMeta(sha1)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	// 记住 Location
 	oldLocation := fileMeta.GetLocation()
 	// 更新 Location
@@ -35,7 +39,7 @@ func (ufmh *UpdateFileMetaHandler) Handler(w http.ResponseWriter, r *http.Reques
 	// 更新 FileMetaDict
 	file.UpdateFileMetaDict(fileMeta)
 	// Rename File
-	err := file.SafeRename(oldLocation, fileMeta.GetLocation())
+	err = file.SafeRename(oldLocation, fileMeta.GetLocation())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

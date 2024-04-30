@@ -28,3 +28,7 @@ func NewDownloadHandler() Handler {
 func NewUpdateFileMetaHandler() Handler {
 	return &UpdateFileMetaHandler{}
 }
+
+func NewDeleteHandler() Handler {
+	return &DeleteHandler{}
+}
