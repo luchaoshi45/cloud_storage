@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"cloud_storage/db/mysql"
 	"cloud_storage/file"
 	"cloud_storage/file/util"
 	"io"
@@ -75,6 +76,18 @@ func (uh *UploadHandler) receiveFile(w http.ResponseWriter, r *http.Request) {
 
 	// 更新 fileMetaDict
 	file.UpdateFileMetaDict(newfileMeta)
+
+	// 更新数据库
+	userFile := mysql.NewUserFile()
+	_ = userFile.SetAttrs(map[string]interface{}{
+		"UploadAt": time.Now().Format("2006-01-02 15:04:05"),
+		"Name":     head.Filename,
+		"Dir":      "tmp/",
+		"Size":     size,
+		"Sha1":     util.FileSha1(newFile),
+		"UserId":   0,
+	})
+	userFile.Insert()
 
 	// 上传成功 页面跳转
 	// 根据当前路由 重定向

@@ -4,15 +4,13 @@ import (
 	"cloud_storage/db/mysql"
 	"cloud_storage/file"
 	"cloud_storage/router"
-	"fmt"
 	"log"
 	"net/http"
 )
 
 func sysInit() {
 	// mysql 数据库
-	db := mysql.MySqlConn("config/mysql/master_conn.json")
-	fmt.Print(db)
+	mysql.MySqlConn("config/mysql/master_conn.json")
 
 	// 文件系统
 	file.GetFileMetaDict() // 单例初始化

@@ -8,22 +8,22 @@ import (
 	"os"
 )
 
-var dataBase *sql.DB
+var mySql *sql.DB
 
-func MySqlConn(location string) *sql.DB {
+func MySqlConn(location string) {
 	cmd := getConnCmd(location)
-	dataBase, err := sql.Open("mysql", cmd)
+	var err error
+	mySql, err = sql.Open("mysql", cmd)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	dataBase.SetMaxOpenConns(1000)
-	err = dataBase.Ping()
+	mySql.SetMaxOpenConns(1000)
+	err = mySql.Ping()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	return dataBase
 }
 
 func getConnCmd(location string) string {
