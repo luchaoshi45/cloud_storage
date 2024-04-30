@@ -85,18 +85,19 @@ Slave_IO_Running: Yes
 Slave_SQL_Running: Yes 
 ...
 */
+```
 
 ### 测试
+```
 docker exec -it mysql-master mysql -uroot -p123456
 
 use fileserver;
 CREATE TABLE example_table (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(255) NOT NULL
 );
 
 docker exec -it mysql-slave mysql -uroot -p123456
 use fileserver;
 SHOW TABLES;
-
 ```
