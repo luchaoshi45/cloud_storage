@@ -23,7 +23,7 @@ mysql:5.7
 
 
 ### 3 Docker分别运行 MySQL 主/从两个容器
-#### mysql主节点
+#### MySQL主节点
 ```
 mkdir -p ../../database/mysql-master
 # 挂载需要绝对路径
@@ -34,7 +34,7 @@ sudo docker run -d --name mysql-master -p 3306:3306 \
 # 查看 3306 端口
 netstat -tuln | grep 3306
 ```
-#### mysql从节点
+#### MySQL从节点
 ```
 mkdir -p ../../database/mysql-slave
 # 挂载需要绝对路径
