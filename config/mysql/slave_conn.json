@@ -1,0 +1,7 @@
+{
+  "user": "root",
+  "password": "123456",
+  "ip": "10.181.105.230",
+  "port": "3307",
+  "databaseName": "fileserver"
+}
