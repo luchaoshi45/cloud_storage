@@ -4,6 +4,7 @@ import (
 	"cloud_storage/db/mysql"
 	"cloud_storage/file"
 	"cloud_storage/file/util"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -87,7 +88,10 @@ func (uh *UploadHandler) receiveFile(w http.ResponseWriter, r *http.Request) {
 		"Sha1":     util.FileSha1(newFile),
 		"UserId":   0,
 	})
-	userFile.Insert()
+	success := userFile.Insert()
+	if success == false {
+		fmt.Print("插入失败")
+	}
 
 	// 上传成功 页面跳转
 	// 根据当前路由 重定向
