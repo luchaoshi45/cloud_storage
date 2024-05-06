@@ -2,9 +2,7 @@ package handler
 
 import (
 	"cloud_storage/db/mysql"
-	"cloud_storage/file"
 	"cloud_storage/file/util"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -52,14 +50,8 @@ func (uh *UploadHandler) receiveFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer f.Close()
 
-	// 文件 meta
-	newfileMeta := file.NewFileMeta()
-	newfileMeta.SetUploadAt(time.Now().Format("2006-01-02 15:04:05"))
-	newfileMeta.SetName(head.Filename)
-	newfileMeta.SetLocation("tmp/" + head.Filename)
-
 	// 本地创建文件
-	newFile, err := os.Create(newfileMeta.GetLocation())
+	newFile, err := os.Create("tmp/" + head.Filename)
 	if err != nil {
 		log.Println("os.Create(\"/tmp/\" + head.Filename) ", err.Error())
 		return
@@ -71,12 +63,7 @@ func (uh *UploadHandler) receiveFile(w http.ResponseWriter, r *http.Request) {
 		log.Println("io.Copy(newFile, file) ", err.Error())
 		return
 	}
-	newfileMeta.SetSize(size)
 	newFile.Seek(0, 0)
-	newfileMeta.SetSha1(util.FileSha1(newFile))
-
-	// 更新 fileMetaDict
-	file.UpdateFileMetaDict(newfileMeta)
 
 	// 更新数据库
 	userFile := mysql.NewUserFile()
@@ -90,11 +77,15 @@ func (uh *UploadHandler) receiveFile(w http.ResponseWriter, r *http.Request) {
 	})
 	success := userFile.Insert()
 	if success == false {
-		fmt.Print("插入失败")
+		// 上传失败 页面跳转
+		// 根据当前路由 重定向
+		currentRoute := r.URL.Path
+		http.Redirect(w, r, currentRoute+"/duplicate", http.StatusFound)
+	} else {
+		// 上传成功 页面跳转
+		// 根据当前路由 重定向
+		currentRoute := r.URL.Path
+		http.Redirect(w, r, currentRoute+"/success", http.StatusFound)
 	}
 
-	// 上传成功 页面跳转
-	// 根据当前路由 重定向
-	currentRoute := r.URL.Path
-	http.Redirect(w, r, currentRoute+"/success", http.StatusFound)
 }
