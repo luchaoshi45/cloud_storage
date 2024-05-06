@@ -33,3 +33,7 @@ func NewUpdateFileMetaHandler() Handler {
 func NewDeleteHandler() Handler {
 	return &DeleteHandler{}
 }
+
+func NewFileNotFound() Handler {
+	return &FileNotFound{}
+}

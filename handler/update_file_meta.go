@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"cloud_storage/db/mysql"
 	"cloud_storage/file"
 	"encoding/json"
 	"net/http"
@@ -26,27 +27,30 @@ func (ufmh *UpdateFileMetaHandler) Handler(w http.ResponseWriter, r *http.Reques
 	sha1 := r.Form.Get("sha1")
 	newFileName := r.Form.Get("name")
 
-	// 得到 fileMeta
-	fileMeta, err := file.GetFileMeta(sha1)
+	// 得到 userFile
+	userFile, err := mysql.NewUserFile().Query(sha1)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	// 记住 Location
-	oldLocation := fileMeta.GetLocation()
-	// 更新 Location
-	fileMeta.SetName(newFileName)
-	// 更新 FileMetaDict
-	file.UpdateFileMetaDict(fileMeta)
+	oldLocation := userFile.GetLocation()
+	// 更新 userFile 和数据库中的 Name
+	userFile, err = userFile.Update(sha1, newFileName)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	// Rename File
-	err = file.SafeRename(oldLocation, fileMeta.GetLocation())
+	err = file.SafeRename(oldLocation, userFile.GetLocation())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	// Write
-	data, err := json.Marshal(fileMeta)
+	data, err := json.Marshal(userFile)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

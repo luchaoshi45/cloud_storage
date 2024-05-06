@@ -27,10 +27,11 @@ func Router() {
 	addEntry("/file/upload", handler.NewUploadHandler().Handler)
 	addEntry("/file/upload/success", handler.NewUploadSuccessHandler().Handler)
 	addEntry("/file/upload/duplicate", handler.NewUploadDuplicateHandler().Handler)
-	addEntry("/file/get/meta", handler.NewGetFileMetaHandler().Handler)
+	addEntry("/file/scan", handler.NewGetFileMetaHandler().Handler)
 	addEntry("/file/download", handler.NewDownloadHandler().Handler)
-	addEntry("/file/update/meta", handler.NewUpdateFileMetaHandler().Handler)
+	addEntry("/file/update/name", handler.NewUpdateFileMetaHandler().Handler)
 	addEntry("/file/delete", handler.NewDeleteHandler().Handler)
+	addEntry("/file/404", handler.NewFileNotFound().Handler)
 	config()
 }
 

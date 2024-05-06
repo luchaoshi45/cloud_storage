@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"cloud_storage/file"
+	"cloud_storage/db/mysql"
 	"io"
 	"net/http"
 	"os"
@@ -14,15 +14,15 @@ func (dh *DownloadHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form["sha1"][0]
 
-	// 得到 fileMeta
-	fileMeta, err := file.GetFileMeta(sha1)
+	// 得到 userFile
+	userFile, err := mysql.NewUserFile().Query(sha1)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	// 得到 文件位置
-	f, err := os.Open(fileMeta.GetLocation())
+	f, err := os.Open(userFile.GetLocation())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -38,6 +38,6 @@ func (dh *DownloadHandler) Handler(w http.ResponseWriter, r *http.Request) {
 
 	// 返回
 	w.Header().Set("Content-Type", "application/octect-stream")
-	w.Header().Set("Content-Disposition", "attachment; filename=\""+fileMeta.GetName()+"\"")
+	w.Header().Set("Content-Disposition", "attachment; filename=\""+userFile.Name+"\"")
 	w.Write(data)
 }

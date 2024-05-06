@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"cloud_storage/db/mysql"
 	"cloud_storage/file"
 	"net/http"
 )
@@ -12,18 +13,20 @@ func (dh *DeleteHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form.Get("sha1")
 
-	fileMeta, err := file.GetFileMeta(sha1)
+	// 得到 userFile
+	userFile := mysql.NewUserFile()
+	_, err := userFile.Query(sha1)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Redirect(w, r, "/file/404", http.StatusFound)
 		return
 	}
 
-	err = file.SafeRemove(fileMeta.GetLocation())
+	err = file.SafeRemove(userFile.GetLocation())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	err = file.RemoveFileMeta(sha1)
+	_, err = userFile.Delete(sha1)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
