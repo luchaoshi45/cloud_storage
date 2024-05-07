@@ -2,7 +2,7 @@ package user
 
 import (
 	"cloud_storage/db/mysql"
-	"cloud_storage/file/util"
+	"cloud_storage/file"
 	"net/http"
 	"os"
 )
@@ -39,7 +39,7 @@ func (su *Signup) Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 对密码进行加盐及取Sha1值加密
-	encPasswd := util.Sha1([]byte(passwd + pwdSalt))
+	encPasswd := file.Sha1([]byte(passwd + pwdSalt))
 	// 将用户信息注册到用户表中
 	suc := mysql.NewUser(username, encPasswd).Signup()
 	if suc {

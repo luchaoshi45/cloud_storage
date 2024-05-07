@@ -2,7 +2,7 @@ package file
 
 import (
 	"cloud_storage/db/mysql"
-	"cloud_storage/file/util"
+	"cloud_storage/file"
 	"io"
 	"log"
 	"net/http"
@@ -72,7 +72,7 @@ func (uh *Upload) receiveFile(w http.ResponseWriter, r *http.Request) {
 		"Name":     head.Filename,
 		"Dir":      "tmp/",
 		"Size":     size,
-		"Sha1":     util.FileSha1(newFile),
+		"Sha1":     file.FileSha1(newFile),
 		"UserId":   0,
 	})
 	success := userFile.Insert()
