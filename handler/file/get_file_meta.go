@@ -1,4 +1,4 @@
-package handler
+package file
 
 import (
 	"cloud_storage/db/mysql"
@@ -6,10 +6,10 @@ import (
 	"net/http"
 )
 
-type GetFileMetaHandler struct {
+type GetFileMeta struct {
 }
 
-func (gfmh *GetFileMetaHandler) Handler(w http.ResponseWriter, r *http.Request) {
+func (gfmh *GetFileMeta) Handler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form["sha1"][0]
 	userFile, err := mysql.NewUserFile().Query(sha1)

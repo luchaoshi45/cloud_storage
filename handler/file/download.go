@@ -1,4 +1,4 @@
-package handler
+package file
 
 import (
 	"cloud_storage/db/mysql"
@@ -7,10 +7,10 @@ import (
 	"os"
 )
 
-type DownloadHandler struct {
+type Download struct {
 }
 
-func (dh *DownloadHandler) Handler(w http.ResponseWriter, r *http.Request) {
+func (dh *Download) Handler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form["sha1"][0]
 

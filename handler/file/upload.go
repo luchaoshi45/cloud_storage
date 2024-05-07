@@ -1,4 +1,4 @@
-package handler
+package file
 
 import (
 	"cloud_storage/db/mysql"
@@ -10,12 +10,12 @@ import (
 	"time"
 )
 
-type UploadHandler struct {
+type Upload struct {
 }
 
-func (uh *UploadHandler) Handler(w http.ResponseWriter, r *http.Request) {
-	//fmt.Print("UploadHandler")
-	//fmt.Fprintf(w, "UploadHandler") //这个写入到w的是输出到客户端的
+func (uh *Upload) Handler(w http.ResponseWriter, r *http.Request) {
+	//fmt.Print("Upload")
+	//fmt.Fprintf(w, "Upload") //这个写入到w的是输出到客户端的
 
 	if r.Method == "GET" {
 		uh.showUploadPage(w)
@@ -25,7 +25,7 @@ func (uh *UploadHandler) Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 // showUploadPage
-func (uh *UploadHandler) showUploadPage(w http.ResponseWriter) {
+func (uh *Upload) showUploadPage(w http.ResponseWriter) {
 	// 读取 static/view/index.html 文件
 	data, err := os.ReadFile("static/view/index.html")
 	if err != nil {
@@ -41,7 +41,7 @@ func (uh *UploadHandler) showUploadPage(w http.ResponseWriter) {
 }
 
 // receiveFile
-func (uh *UploadHandler) receiveFile(w http.ResponseWriter, r *http.Request) {
+func (uh *Upload) receiveFile(w http.ResponseWriter, r *http.Request) {
 	// 接收文件
 	f, head, err := r.FormFile("file")
 	if err != nil {
@@ -67,7 +67,7 @@ func (uh *UploadHandler) receiveFile(w http.ResponseWriter, r *http.Request) {
 
 	// 更新数据库
 	userFile := mysql.NewUserFile()
-	_ = userFile.SetAttrs(map[string]interface{}{
+	userFile.SetAttrs(map[string]interface{}{
 		"UploadAt": time.Now().Format("2006-01-02 15:04:05"),
 		"Name":     head.Filename,
 		"Dir":      "tmp/",

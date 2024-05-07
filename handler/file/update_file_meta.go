@@ -1,4 +1,4 @@
-package handler
+package file
 
 import (
 	"cloud_storage/db/mysql"
@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-type UpdateFileMetaHandler struct {
+type UpdateFileMeta struct {
 }
 
-func (ufmh *UpdateFileMetaHandler) Handler(w http.ResponseWriter, r *http.Request) {
+func (ufmh *UpdateFileMeta) Handler(w http.ResponseWriter, r *http.Request) {
 	// POST
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusMethodNotAllowed)

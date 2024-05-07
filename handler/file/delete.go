@@ -1,4 +1,4 @@
-package handler
+package file
 
 import (
 	"cloud_storage/db/mysql"
@@ -6,10 +6,10 @@ import (
 	"net/http"
 )
 
-type DeleteHandler struct {
+type Delete struct {
 }
 
-func (dh *DeleteHandler) Handler(w http.ResponseWriter, r *http.Request) {
+func (dh *Delete) Handler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form.Get("sha1")
 

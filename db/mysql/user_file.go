@@ -1,9 +1,5 @@
 package mysql
 
-import (
-	"reflect"
-)
-
 type UserFile struct {
 	Sha1     string `json:"sha1"`
 	Name     string `json:"name"`
@@ -77,53 +73,24 @@ func (uf *UserFile) Delete(sha1 string) (*UserFile, error) {
 	return uf, nil
 }
 
-func (uf *UserFile) SetAttrs(attrs map[string]interface{}) error {
-	v := reflect.ValueOf(uf).Elem()
-
-	for attr, value := range attrs {
-		field := v.FieldByName(attr)
-
-		// 检查字段是否存在
-		if !field.IsValid() {
-			return &FieldNotFoundError{Field: attr}
-		}
-
-		// 检查字段是否可设置
-		if !field.CanSet() {
-			return &FieldNotSettableError{Field: attr}
-		}
-
-		// 将传入的值转换为字段的类型并设置
-		val := reflect.ValueOf(value)
-		if val.Type().ConvertibleTo(field.Type()) {
-			field.Set(val.Convert(field.Type()))
-		} else {
-			return &FieldTypeMismatchError{
-				Field:    attr,
-				Expected: field.Type().String(),
-				Actual:   val.Type().String(),
-			}
+// SetAttrs 方法用于根据字典设置 UserFile 结构体的属性
+func (uf *UserFile) SetAttrs(attrs map[string]interface{}) {
+	for key, value := range attrs {
+		switch key {
+		case "Sha1":
+			uf.Sha1 = value.(string)
+		case "Name":
+			uf.Name = value.(string)
+		case "Dir":
+			uf.Dir = value.(string)
+		case "Size":
+			uf.Size = value.(int64)
+		case "UploadAt":
+			uf.UploadAt = value.(string)
+		case "UserID":
+			uf.UserID = value.(int64)
 		}
 	}
-
-	return nil
-}
-
-func (uf *UserFile) GetAttr(attr string) (interface{}, error) {
-	v := reflect.ValueOf(uf).Elem()
-	field := v.FieldByName(attr)
-
-	// 检查字段是否存在
-	if !field.IsValid() {
-		return nil, &FieldNotFoundError{Field: attr}
-	}
-
-	// 检查字段是否可取值
-	if !field.CanInterface() {
-		return nil, &FieldNotGettableError{Field: attr}
-	}
-
-	return field.Interface(), nil
 }
 
 func (uf *UserFile) GetLocation() string {

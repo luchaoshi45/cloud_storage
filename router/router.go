@@ -1,7 +1,7 @@
 package router
 
 import (
-	"cloud_storage/handler"
+	"cloud_storage/handler/file"
 	"cloud_storage/handler/user"
 	"net/http"
 	"sync"
@@ -25,14 +25,14 @@ func GetRouterDict() map[string]handlerFunc {
 // Router 初始化
 func Router() {
 	GetRouterDict()
-	addEntry("/file/upload", handler.NewUploadHandler().Handler)
-	addEntry("/file/upload/success", handler.NewUploadSuccessHandler().Handler)
-	addEntry("/file/upload/duplicate", handler.NewUploadDuplicateHandler().Handler)
-	addEntry("/file/scan", handler.NewGetFileMetaHandler().Handler)
-	addEntry("/file/download", handler.NewDownloadHandler().Handler)
-	addEntry("/file/update/name", handler.NewUpdateFileMetaHandler().Handler)
-	addEntry("/file/delete", handler.NewDeleteHandler().Handler)
-	addEntry("/file/404", handler.NewFileNotFound().Handler)
+	addEntry("/file/upload", (&file.Upload{}).Handler)
+	addEntry("/file/upload/success", (&file.UploadSuccess{}).Handler)
+	addEntry("/file/upload/duplicate", (&file.UploadDuplicate{}).Handler)
+	addEntry("/file/scan", (&file.GetFileMeta{}).Handler)
+	addEntry("/file/download", (&file.Download{}).Handler)
+	addEntry("/file/update/name", (&file.UpdateFileMeta{}).Handler)
+	addEntry("/file/delete", (&file.Delete{}).Handler)
+	addEntry("/file/404", (&file.FileNotFound{}).Handler)
 
 	addEntry("/user/signup", (&user.Signup{}).Handler)
 	config()
