@@ -2,6 +2,7 @@ package router
 
 import (
 	"cloud_storage/handler"
+	"cloud_storage/handler/user"
 	"net/http"
 	"sync"
 )
@@ -32,6 +33,8 @@ func Router() {
 	addEntry("/file/update/name", handler.NewUpdateFileMetaHandler().Handler)
 	addEntry("/file/delete", handler.NewDeleteHandler().Handler)
 	addEntry("/file/404", handler.NewFileNotFound().Handler)
+
+	addEntry("/user/signup", (&user.Signup{}).Handler)
 	config()
 }
 
