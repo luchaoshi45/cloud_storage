@@ -10,8 +10,12 @@ http://10.181.105.230:42200/file/delete?sha1=b090ed884b07d2d98747141aefd25590b8b
 
 
 ### 目录
+#### [config](config)    配置文件
+#### [configurator](configurator)    配置文件解析器
+#### [db](db)    数据库
+#### [file](file)    用户文件
 #### [handler](handler)    路由服务函数
 #### [router](router)    路由
-#### [static](static)    镜头文件
+#### [static](static)    静态资源
 #### [tmp](tmp)    文件临时存储目录
 #### [util](file/util)    算法工具

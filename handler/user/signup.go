@@ -41,7 +41,7 @@ func (su *Signup) Handler(w http.ResponseWriter, r *http.Request) {
 	// 对密码进行加盐及取Sha1值加密
 	encPasswd := file.Sha1([]byte(passwd + pwdSalt))
 	// 将用户信息注册到用户表中
-	suc := mysql.NewUser(username, encPasswd).Signup()
+	suc := mysql.NewUser(username, encPasswd).SignUp()
 	if suc {
 		w.Write([]byte("SUCCESS"))
 	} else {

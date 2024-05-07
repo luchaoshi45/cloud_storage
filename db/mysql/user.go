@@ -25,7 +25,7 @@ func NewUser(UserName, UserPwd string) *User {
 }
 
 // Signup : 用户登录
-func (u *User) Signup() bool {
+func (u *User) SignUp() bool {
 	stmt, err := mySql.Prepare("insert ignore into User (`user_name`,`user_pwd`) values (?,?)")
 	if err != nil {
 		fmt.Println("Failed to insert, err:" + err.Error())
