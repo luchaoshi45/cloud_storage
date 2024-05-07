@@ -7,10 +7,7 @@ import (
 	"os"
 )
 
-type Download struct {
-}
-
-func (dh *Download) Handler(w http.ResponseWriter, r *http.Request) {
+func (f *File) Download(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form["sha1"][0]
 
@@ -22,15 +19,15 @@ func (dh *Download) Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 得到 文件位置
-	f, err := os.Open(userFile.GetLocation())
+	file, err := os.Open(userFile.GetLocation())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	defer f.Close()
+	defer file.Close()
 
 	// 读取文件到内存
-	data, err := io.ReadAll(f)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

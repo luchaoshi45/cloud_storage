@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 )
@@ -24,7 +25,7 @@ func NewUser(UserName, UserPwd string) *User {
 	return &User{UserName: UserName, UserPwd: UserPwd}
 }
 
-// Signup : 用户登录
+// SignUp : 用户注册
 func (u *User) SignUp() bool {
 	stmt, err := mySql.Prepare("insert ignore into User (`user_name`,`user_pwd`) values (?,?)")
 	if err != nil {
@@ -43,5 +44,37 @@ func (u *User) SignUp() bool {
 		return true
 	}
 
+	return false
+}
+
+// SignIn : Check if the provided username and encrypted password match
+func (u *User) SignIn() bool {
+	// Prepare the SQL statement
+	stmt, err := mySql.Prepare("SELECT user_pwd FROM User WHERE user_name=? LIMIT 1")
+	if err != nil {
+		fmt.Println("Error preparing SQL statement:", err.Error())
+		return false
+	}
+	defer stmt.Close()
+
+	// Query the database for the user's password
+	row := stmt.QueryRow(u.UserName)
+
+	var dbPwd string
+	// Scan the password from the row
+	err = row.Scan(&dbPwd)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("Username not found:", u.UserName)
+			return false
+		}
+		fmt.Println("Error retrieving password from database:", err.Error())
+		return false
+	}
+
+	// Compare the encrypted passwords
+	if dbPwd == u.UserPwd {
+		return true
+	}
 	return false
 }

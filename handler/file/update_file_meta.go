@@ -7,10 +7,7 @@ import (
 	"net/http"
 )
 
-type UpdateFileMeta struct {
-}
-
-func (ufmh *UpdateFileMeta) Handler(w http.ResponseWriter, r *http.Request) {
+func (f *File) UpdateFileMeta(w http.ResponseWriter, r *http.Request) {
 	// POST
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusMethodNotAllowed)

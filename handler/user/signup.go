@@ -4,28 +4,17 @@ import (
 	"cloud_storage/db/mysql"
 	"cloud_storage/file"
 	"net/http"
-	"os"
 )
 
-type Signup struct {
-}
-
-const (
-	// 用于加密的盐值(自定义)
-	pwdSalt    = "*#890"
-	minPwdLen  = 1
-	minNameLen = 1
-)
-
-func (su *Signup) Handler(w http.ResponseWriter, r *http.Request) {
+func (su *User) SignUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		data, err := os.ReadFile("./static/view/signup.html")
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		w.Write(data)
-		//http.Redirect(w, r, "/static/view/signup.html", http.StatusFound)
+		//data, err := os.ReadFile("./static/view/signup.html")
+		//if err != nil {
+		//	w.WriteHeader(http.StatusInternalServerError)
+		//	return
+		//}
+		//w.Write(data)
+		http.Redirect(w, r, "/static/view/signup.html", http.StatusFound)
 		return
 	}
 	r.ParseForm()

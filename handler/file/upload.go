@@ -10,22 +10,19 @@ import (
 	"time"
 )
 
-type Upload struct {
-}
-
-func (uh *Upload) Handler(w http.ResponseWriter, r *http.Request) {
+func (f *File) Upload(w http.ResponseWriter, r *http.Request) {
 	//fmt.Print("Upload")
 	//fmt.Fprintf(w, "Upload") //这个写入到w的是输出到客户端的
 
 	if r.Method == "GET" {
-		uh.showUploadPage(w)
+		f.showUploadPage(w)
 	} else if r.Method == "POST" {
-		uh.receiveFile(w, r)
+		f.receiveFile(w, r)
 	}
 }
 
 // showUploadPage
-func (uh *Upload) showUploadPage(w http.ResponseWriter) {
+func (f *File) showUploadPage(w http.ResponseWriter) {
 	// 读取 static/view/index.html 文件
 	data, err := os.ReadFile("static/view/index.html")
 	if err != nil {
@@ -41,7 +38,7 @@ func (uh *Upload) showUploadPage(w http.ResponseWriter) {
 }
 
 // receiveFile
-func (uh *Upload) receiveFile(w http.ResponseWriter, r *http.Request) {
+func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
 	// 接收文件
 	f, head, err := r.FormFile("file")
 	if err != nil {

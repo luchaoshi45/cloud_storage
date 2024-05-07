@@ -6,10 +6,7 @@ import (
 	"net/http"
 )
 
-type GetFileMeta struct {
-}
-
-func (gfmh *GetFileMeta) Handler(w http.ResponseWriter, r *http.Request) {
+func (f *File) GetFileMeta(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form["sha1"][0]
 	userFile, err := mysql.NewUserFile().Query(sha1)

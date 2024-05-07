@@ -25,16 +25,24 @@ func GetRouterDict() map[string]handlerFunc {
 // Router 初始化
 func Router() {
 	GetRouterDict()
-	addEntry("/file/upload", (&file.Upload{}).Handler)
-	addEntry("/file/upload/success", (&file.UploadSuccess{}).Handler)
-	addEntry("/file/upload/duplicate", (&file.UploadDuplicate{}).Handler)
-	addEntry("/file/scan", (&file.GetFileMeta{}).Handler)
-	addEntry("/file/download", (&file.Download{}).Handler)
-	addEntry("/file/update/name", (&file.UpdateFileMeta{}).Handler)
-	addEntry("/file/delete", (&file.Delete{}).Handler)
-	addEntry("/file/404", (&file.FileNotFound{}).Handler)
+	// 设置静态文件路径
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	addEntry("/user/signup", (&user.Signup{}).Handler)
+	u := user.NewUser()
+	f := file.NewFile()
+
+	addEntry("/file/upload", f.Upload)
+	addEntry("/file/upload/success", f.UploadSuccess)
+	addEntry("/file/upload/duplicate", f.UploadDuplicate)
+	addEntry("/file/scan", f.GetFileMeta)
+	addEntry("/file/download", f.Download)
+	addEntry("/file/update/name", f.UpdateFileMeta)
+	addEntry("/file/delete", f.Delete)
+	addEntry("/file/404", f.FileNotFound)
+
+	addEntry("/user/signup", u.SignUp)
+	addEntry("/user/signin", u.SignIn)
 	config()
 }
 

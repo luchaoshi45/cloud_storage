@@ -6,10 +6,7 @@ import (
 	"net/http"
 )
 
-type Delete struct {
-}
-
-func (dh *Delete) Handler(w http.ResponseWriter, r *http.Request) {
+func (f *File) Delete(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form.Get("sha1")
 
