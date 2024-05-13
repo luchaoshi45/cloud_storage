@@ -4,6 +4,7 @@ import (
 	"cloud_storage/handler/file"
 	"cloud_storage/handler/user"
 	"net/http"
+	"regexp"
 	"sync"
 )
 
@@ -55,6 +56,20 @@ func addEntry(key string, value handlerFunc) {
 // 配置路由
 func config() {
 	for k, v := range routerDict {
-		http.HandleFunc(k, v)
+		// 编译正则表达式
+		re := regexp.MustCompile(`^/user/sign`)
+
+		// 判断字符串是否匹配正则表达式
+		if re.MatchString(k) {
+			http.HandleFunc(k, v)
+		} else {
+			re := regexp.MustCompile(`^/file/`)
+			if re.MatchString(k) {
+				http.HandleFunc(k, v)
+			} else {
+				http.HandleFunc(k, HttpInterceptor(http.HandlerFunc(v)))
+			}
+		}
+
 	}
 }
