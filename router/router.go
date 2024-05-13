@@ -43,6 +43,7 @@ func Router() {
 
 	addEntry("/user/signup", u.SignUp)
 	addEntry("/user/signin", u.SignIn)
+	addEntry("/user/info", u.Info)
 	config()
 }
 

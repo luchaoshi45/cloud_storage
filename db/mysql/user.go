@@ -3,22 +3,21 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
-	"time"
 )
 
 // User : 用户表model
 type User struct {
-	ID             int       `json:"id"`
-	UserName       string    `json:"user_name"`
-	UserPwd        string    `json:"user_pwd"`
-	Email          string    `json:"email"`
-	Phone          string    `json:"phone"`
-	EmailValidated bool      `json:"email_validated"`
-	PhoneValidated bool      `json:"phone_validated"`
-	SignupAt       time.Time `json:"signup_at"`
-	LastActive     time.Time `json:"last_active"`
-	Profile        string    `json:"profile"`
-	Status         int       `json:"status"`
+	ID             int    `json:"id"`
+	UserName       string `json:"user_name"`
+	UserPwd        string `json:"user_pwd"`
+	Email          string `json:"email"`
+	Phone          string `json:"phone"`
+	EmailValidated bool   `json:"email_validated"`
+	PhoneValidated bool   `json:"phone_validated"`
+	SignupAt       string `json:"signup_at"`
+	LastActive     string `json:"last_active"`
+	Profile        string `json:"profile"`
+	Status         int    `json:"status"`
 }
 
 func NewUser(UserName, UserPwd string) *User {
@@ -77,4 +76,24 @@ func (u *User) SignIn() bool {
 		return true
 	}
 	return false
+}
+
+// GetUserInfo : 查询用户信息
+func (u *User) GetUserInfo(username string) (User, error) {
+	user := User{}
+
+	stmt, err := mySql.Prepare(
+		"select user_name,signup_at from User where user_name=? limit 1")
+	if err != nil {
+		fmt.Println(err.Error())
+		return user, err
+	}
+	defer stmt.Close()
+
+	// 执行查询的操作
+	err = stmt.QueryRow(username).Scan(&user.UserName, &user.SignupAt)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }

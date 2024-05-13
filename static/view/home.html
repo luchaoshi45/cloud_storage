@@ -79,8 +79,8 @@
             },
             success: function (body, textStatus, jqXHR) {
                 var resp = JSON.parse(body);
-                document.getElementById("username").innerHTML = resp.data.Username;
-                document.getElementById("regtime").innerHTML = resp.data.SignupAt;
+                document.getElementById("username").innerHTML = resp.data.user_name;
+                document.getElementById("regtime").innerHTML = resp.data.signup_at;
                 updateFileList();
             }
         });
