@@ -12,7 +12,7 @@ func (f *File) Download(w http.ResponseWriter, r *http.Request) {
 	sha1 := r.Form["sha1"][0]
 
 	// 得到 userFile
-	userFile, err := mysql.NewUserFile().Query(sha1)
+	userFile, err := mysql.NewFile().Query(sha1)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

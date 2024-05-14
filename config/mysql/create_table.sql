@@ -1,4 +1,4 @@
-CREATE TABLE UserFile (
+CREATE TABLE File (
     sha1 VARCHAR(255) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     dir VARCHAR(255) NOT NULL,
@@ -22,15 +22,15 @@ CREATE TABLE User(
     profile TEXT COMMENT'用户属性',
     status INT(11) NOT NULL DEFAULT 0 COMMENT '账户状态(启用/禁用/锁定/标记删除',
     PRIMARY KEY (id),
-    UNIQUE KEY `idx_user_name` (`user_name`),
-    UNIQUE KEY `idx_phone` (`phone`),
-    KEY `idx_status` (`status`)
+    UNIQUE KEY idx_user_name (user_name),
+    UNIQUE KEY idx_phone (phone),
+    KEY idx_status (status)
 )ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE UserToken(
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-     `user_name` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '用户名',
-     `token` CHAR(40) NOT NULL DEFAULT '' COMMENT '用户登录token',
-     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_user_name` (`user_name`)
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    user_name VARCHAR(64) NOT NULL DEFAULT '' COMMENT '用户名',
+    token CHAR(40) NOT NULL DEFAULT '' COMMENT '用户登录token',
+    PRIMARY KEY (id),
+    UNIQUE KEY idx_user_name (user_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

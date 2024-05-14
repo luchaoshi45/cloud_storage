@@ -11,7 +11,7 @@ func (f *File) Delete(w http.ResponseWriter, r *http.Request) {
 	sha1 := r.Form.Get("sha1")
 
 	// 得到 userFile
-	userFile := mysql.NewUserFile()
+	userFile := mysql.NewFile()
 	_, err := userFile.Query(sha1)
 	if err != nil {
 		http.Redirect(w, r, "/file/404", http.StatusFound)

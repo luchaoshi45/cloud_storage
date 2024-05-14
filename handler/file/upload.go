@@ -63,7 +63,7 @@ func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
 	newFile.Seek(0, 0)
 
 	// 更新数据库
-	userFile := mysql.NewUserFile()
+	userFile := mysql.NewFile()
 	userFile.SetAttrs(map[string]interface{}{
 		"UploadAt": time.Now().Format("2006-01-02 15:04:05"),
 		"Name":     head.Filename,

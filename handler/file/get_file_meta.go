@@ -9,7 +9,7 @@ import (
 func (f *File) GetFileMeta(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sha1 := r.Form["sha1"][0]
-	userFile, err := mysql.NewUserFile().Query(sha1)
+	userFile, err := mysql.NewFile().Query(sha1)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
