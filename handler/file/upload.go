@@ -55,7 +55,7 @@ func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// copy 文件
-	size, err := io.Copy(newFile, f)
+	fileSize, err := io.Copy(newFile, f)
 	if err != nil {
 		log.Println("io.Copy(newFile, file) ", err.Error())
 		return
@@ -63,26 +63,36 @@ func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
 	newFile.Seek(0, 0)
 
 	// 更新数据库
-	userFile := mysql.NewFile()
-	userFile.SetAttrs(map[string]interface{}{
+	tFile := mysql.NewFile()
+	fileSha1 := file.FileSha1(newFile)
+	tFile.SetAttrs(map[string]interface{}{
 		"UploadAt": time.Now().Format("2006-01-02 15:04:05"),
 		"Name":     head.Filename,
 		"Dir":      "tmp/",
-		"Size":     size,
-		"Sha1":     file.FileSha1(newFile),
-		"UserId":   0,
+		"Size":     fileSize,
+		"Sha1":     fileSha1,
 	})
-	success := userFile.Insert()
+	success := tFile.Insert()
 	if success == false {
 		// 上传失败 页面跳转
 		// 根据当前路由 重定向
 		currentRoute := r.URL.Path
 		http.Redirect(w, r, currentRoute+"/duplicate", http.StatusFound)
 	} else {
-		// 上传成功 页面跳转
-		// 根据当前路由 重定向
-		currentRoute := r.URL.Path
-		http.Redirect(w, r, currentRoute+"/success", http.StatusFound)
+		// 上传UserFile
+		userFile := mysql.NewUserFile()
+		username := r.Form.Get("username")
+		success = userFile.Insert(username, fileSha1, head.Filename, fileSize)
+		if !success {
+			// 上传失败 页面跳转
+			// 根据当前路由 重定向
+			currentRoute := r.URL.Path
+			http.Redirect(w, r, currentRoute+"/duplicate", http.StatusFound)
+		} else {
+			// 上传成功 页面跳转
+			// 根据当前路由 重定向
+			currentRoute := r.URL.Path
+			http.Redirect(w, r, currentRoute+"/success", http.StatusFound)
+		}
 	}
-
 }

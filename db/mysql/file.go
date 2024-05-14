@@ -11,7 +11,6 @@ type File struct {
 	Dir      string `json:"dir"`
 	Size     int64  `json:"size"`
 	UploadAt string `json:"uploadAt"`
-	UserID   int64  `json:"userId"`
 }
 
 func NewFile() *File {
@@ -44,7 +43,6 @@ func (f *File) create() {
 			dir VARCHAR(255) NOT NULL,
 			size BIGINT NOT NULL,
 			upload_at DATETIME NOT NULL,
-			user_id BIGINT NOT NULL,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 		);
@@ -66,13 +64,13 @@ func (f *File) existsCreate() {
 // Insert : 插入用户文件表
 func (f *File) Insert() bool {
 	f.existsCreate()
-	stmt, err := mySql.Prepare("insert into File (`user_id`, `sha1`, `name`, `dir`,`size`, `upload_at`) VALUES (?, ?, ?, ?, ?, ?)")
+	stmt, err := mySql.Prepare("insert into File (`sha1`, `name`, `dir`,`size`, `upload_at`) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return false
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(f.UserID, f.Sha1, f.Name, f.Dir, f.Size, f.UploadAt)
+	_, err = stmt.Exec(f.Sha1, f.Name, f.Dir, f.Size, f.UploadAt)
 	if err != nil {
 		return false
 	}
@@ -81,8 +79,8 @@ func (f *File) Insert() bool {
 
 // Query : 查询用户文件表
 func (f *File) Query(sha1 string) (*File, error) {
-	err := mySql.QueryRow("SELECT `sha1`, `name`, `dir`, `size`, `upload_at`, `user_id` FROM File WHERE `sha1` = ?",
-		sha1).Scan(&f.Sha1, &f.Name, &f.Dir, &f.Size, &f.UploadAt, &f.UserID)
+	err := mySql.QueryRow("SELECT `sha1`, `name`, `dir`, `size`, `upload_at` FROM File WHERE `sha1` = ?",
+		sha1).Scan(&f.Sha1, &f.Name, &f.Dir, &f.Size, &f.UploadAt)
 	if err != nil {
 		return nil, err
 	}
@@ -138,8 +136,6 @@ func (f *File) SetAttrs(attrs map[string]interface{}) {
 			f.Size = value.(int64)
 		case "UploadAt":
 			f.UploadAt = value.(string)
-		case "UserID":
-			f.UserID = value.(int64)
 		}
 	}
 }
