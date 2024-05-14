@@ -8,14 +8,14 @@ import (
 
 // UserFile : 用户文件表
 type UserFile struct {
-	ID         int    `json:"id"`
-	UserName   string `json:"user_name"`
-	FileSHA1   string `json:"file_sha1"`
-	FileSize   int    `json:"file_size"`
-	FileName   string `json:"file_name"`
-	UploadAt   string `json:"upload_at"`
-	LastUpdate string `json:"last_update"`
-	Status     int    `json:"status"`
+	ID          int    `json:"id"`
+	UserName    string `json:"user_name"`
+	FileSha1    string `json:"file_sha1"`
+	FileSize    int    `json:"file_size"`
+	FileName    string `json:"file_name"`
+	UploadAt    string `json:"upload_at"`
+	LastUpdated string `json:"last_updated"`
+	Status      int    `json:"status"`
 }
 
 func NewUserFile() *UserFile {
@@ -49,7 +49,7 @@ func (uf *UserFile) create() {
 			file_size INT(11) DEFAULT 0 COMMENT '文件大小',
 			file_name VARCHAR(256) NOT NULL DEFAULT '' COMMENT '文件名',
 			upload_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
-			last_update DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
+			last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
 			status INT(11) NOT NULL DEFAULT 0 COMMENT '文件状态(0正常1已删除2禁用)',
 			UNIQUE KEY idx_user_file (user_name, file_sha1),
 			KEY idx_status (status),
@@ -84,4 +84,33 @@ func (uf *UserFile) Insert(username, filehash, filename string, filesize int64) 
 		return false
 	}
 	return true
+}
+
+// QueryUserFileMetas : 批量获取用户文件信息
+func (uf *UserFile) QueryUserFileMetas(username string, limit int) ([]UserFile, error) {
+	stmt, err := mySql.Prepare(
+		"select file_sha1,file_name,file_size,upload_at," +
+			"last_updated from UserFile where user_name=? limit ?")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(username, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	var userFiles []UserFile
+	for rows.Next() {
+		ufile := UserFile{}
+		err = rows.Scan(&ufile.FileSha1, &ufile.FileName, &ufile.FileSize,
+			&ufile.UploadAt, &ufile.LastUpdated)
+		if err != nil {
+			fmt.Println(err.Error())
+			break
+		}
+		userFiles = append(userFiles, ufile)
+	}
+	return userFiles, nil
 }

@@ -41,7 +41,7 @@ CREATE TABLE UserFile (
     file_size INT(11) DEFAULT 0 COMMENT '文件大小',
     file_name VARCHAR(256) NOT NULL DEFAULT '' COMMENT '文件名',
     upload_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
-    last_update DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
     status INT(11) NOT NULL DEFAULT 0 COMMENT '文件状态(0正常1已删除2禁用)',
     UNIQUE KEY idx_user_file (user_name, file_sha1),
     KEY idx_status (status),

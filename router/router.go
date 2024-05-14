@@ -3,6 +3,7 @@ package router
 import (
 	"cloud_storage/handler/file"
 	"cloud_storage/handler/user"
+	"cloud_storage/handler/user_file"
 	"net/http"
 	"regexp"
 	"sync"
@@ -32,6 +33,7 @@ func Router() {
 
 	u := user.NewUser()
 	f := file.NewFile()
+	uf := user_file.NewUserFile()
 
 	addEntry("/file/upload", f.Upload)
 	addEntry("/file/upload/success", f.UploadSuccess)
@@ -45,6 +47,8 @@ func Router() {
 	addEntry("/user/signup", u.SignUp)
 	addEntry("/user/signin", u.SignIn)
 	addEntry("/user/info", u.Info)
+
+	addEntry("/user_file/query", uf.FileQuery)
 	config()
 }
 

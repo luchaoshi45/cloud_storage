@@ -88,7 +88,7 @@
 
     function updateFileList() {
         $.ajax({
-            url: "/file/query?" + queryParams(),
+            url: "/user_file/query?" + queryParams(),
             type: "POST",
             data: {
                 limit: 15
@@ -112,25 +112,25 @@
                 for (var i = 0; i < data.length; i++) {
                     var x = document.getElementById('filetbl').insertRow();
                     var cell = x.insertCell();
-                    cell.innerHTML = data[i].FileHash.substr(0, 20)+"...";
+                    cell.innerHTML = data[i].file_sha1.substr(0, 20)+"...";
 
                     cell = x.insertCell();
-                    cell.innerHTML = data[i].FileName;
+                    cell.innerHTML = data[i].file_name;
 
                     cell = x.insertCell();
-                    cell.innerHTML = data[i].FileSize;
+                    cell.innerHTML = data[i].file_size;
 
                     cell = x.insertCell();
-                    cell.innerHTML = data[i].UploadAt;
+                    cell.innerHTML = data[i].upload_at;
 
                     cell = x.insertCell();
-                    cell.innerHTML = data[i].LastUpdated;
+                    cell.innerHTML = data[i].last_updated;
 
                     cell = x.insertCell();
-                    cell.innerHTML = '<button class="btn btn-success" ' +
-                        'style="height:30px;margin:5px 0;"' +
-                        'onClick = "downloadFile(\'http://localhost:8080/file/' +
-                        'downloadurl?filehash=' + data[i].FileHash + '&' + queryParams() + '\')">下载</button>';
+                    const downloadUrl = '/file/download?sha1=' + data[i].file_sha1 + '&' + queryParams();
+                    const fileName = data[i].file_name;
+                    cell.innerHTML = '<button class="btn btn-success" style="height:30px;margin:5px 0;" onClick="downloadFile(\'' + downloadUrl + '\', \'' + fileName + '\')">下载</button>';
+
                 }
             }
         });
@@ -140,30 +140,63 @@
         window.location.href = '/file/upload?' + queryParams();
     }
 
-    function downloadFile(durl) {
+
+    // function downloadFile(durl) {
+    //     $.ajax({
+    //         url: durl,
+    //         type: "POST",
+    //         error: function (jqXHR, textStatus, errorThrown) {
+    //             if (textStatus == "error") {
+    //                 alert(textStatus + " : " + errorThrown);
+    //             } else {
+    //                 alert(textStatus);
+    //             }
+    //         },
+    //         success: function (body, textStatus, jqXHR) {
+    //             try {
+    //                 alert("文件即将下载自: " + body);
+    //                 var elemIF = document.createElement("iframe");
+    //                 elemIF.src = body;
+    //                 elemIF.style.display = "none";
+    //                 document.body.appendChild(elemIF);
+    //             } catch (e) {
+    //                 alert(e);
+    //             }
+    //         }
+    //     });
+    // }
+
+
+    function downloadFile(durl, fileName) {
         $.ajax({
             url: durl,
             type: "POST",
+            responseType: 'blob', // 设置响应类型为 blob
+            success: function (blobData, textStatus, jqXHR) {
+                try {
+                    var blob = new Blob([blobData], { type: jqXHR.getResponseHeader('Content-Type') });
+                    var url = window.URL.createObjectURL(blob); // 创建一个 URL 对象
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName; // 这里设置下载的文件名
+                    a.click(); // 模拟点击下载链接
+                    window.URL.revokeObjectURL(url); // 释放 URL 对象
+                } catch (e) {
+                    alert(e);
+                }
+            },
             error: function (jqXHR, textStatus, errorThrown) {
                 if (textStatus == "error") {
                     alert(textStatus + " : " + errorThrown);
                 } else {
                     alert(textStatus);
                 }
-            },
-            success: function (body, textStatus, jqXHR) {
-                try {
-                    alert("文件即将下载自: " + body);
-                    var elemIF = document.createElement("iframe");
-                    elemIF.src = body;
-                    elemIF.style.display = "none";
-                    document.body.appendChild(elemIF);
-                } catch (e) {
-                    alert(e);
-                }
             }
         });
     }
+
+
+
 </script>
 
 </html>
