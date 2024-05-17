@@ -3,6 +3,10 @@ package file
 import (
 	"cloud_storage/db/mysql"
 	"cloud_storage/file"
+	"crypto/sha1"
+	"database/sql"
+	"encoding/hex"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -39,6 +43,12 @@ func (f *File) showUploadPage(w http.ResponseWriter) {
 
 // receiveFile
 func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
+
+	// 秒传
+	if this.FastUpload(w, r) {
+		return
+	}
+
 	// 接收文件
 	f, head, err := r.FormFile("file")
 	if err != nil {
@@ -95,4 +105,71 @@ func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, currentRoute+"/success", http.StatusFound)
 		}
 	}
+}
+
+// FastUpload 秒传接口
+func (f *File) FastUpload(w http.ResponseWriter, r *http.Request) bool {
+	r.ParseForm()
+	// 1.1 解析请求参数
+	username := r.Form.Get("username")
+
+	// 1.2 filehash
+	tf, head, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, "Failed to read file from request", http.StatusBadRequest)
+		return false
+	}
+	defer tf.Close()
+
+	// 创建SHA-1哈希对象
+	h := sha1.New()
+	// 将文件内容传入哈希对象
+	filesize, err := io.Copy(h, tf)
+	if err != nil {
+		http.Error(w, "Failed to read file content", http.StatusInternalServerError)
+		return false
+	}
+	// 计算哈希值
+	hashInBytes := h.Sum(nil)
+	// 将哈希值转换成16进制字符串
+	filehash := hex.EncodeToString(hashInBytes)
+
+	// 1.3 filename
+	filename := head.Filename
+
+	// 2. 从文件表中查询相同hash的文件记录
+	fileMeta, err := mysql.NewFile().Query(filehash)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return false
+	}
+
+	// 3. 查不到记录则返回秒传失败
+	if fileMeta == nil {
+		//resp := handler.RespMsg{
+		//	Code: -1,
+		//	Msg:  "秒传失败，请访问普通上传接口",
+		//}
+		//w.Write(resp.JSONBytes())
+		return false
+	}
+
+	// 4. 上传过则将文件信息写入用户文件表， 返回成功
+	userFile := mysql.NewUserFile()
+	suc := userFile.Insert(username, filehash, filename, int64(filesize))
+	if suc {
+		//resp := handler.RespMsg{
+		//	Code: 0,
+		//	Msg:  "秒传成功",
+		//}
+		//w.Write(resp.JSONBytes())
+		return true
+	}
+	//resp := handler.RespMsg{
+	//	Code: -2,
+	//	Msg:  "秒传失败，请稍后重试",
+	//}
+	//w.Write(resp.JSONBytes())
+	return false
 }

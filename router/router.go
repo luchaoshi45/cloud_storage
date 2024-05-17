@@ -36,6 +36,7 @@ func Router() {
 	uf := user_file.NewUserFile()
 
 	addEntry("/file/upload", f.Upload)
+	//addEntry("/static/view/", f.Upload)
 	addEntry("/file/upload/success", f.UploadSuccess)
 	addEntry("/file/upload/duplicate", f.UploadDuplicate)
 	addEntry("/file/scan", f.GetFileMeta)
