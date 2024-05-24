@@ -8,3 +8,7 @@ type Config interface {
 func NewMysqlConfig() Config {
 	return new(MysqlConfig)
 }
+
+func NewCephConfig() Config {
+	return new(CephConfig)
+}

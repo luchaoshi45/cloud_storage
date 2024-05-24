@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cloud_storage/db/ceph"
 	"cloud_storage/db/mysql"
 	"cloud_storage/db/redis"
 	"cloud_storage/router"
@@ -14,6 +15,9 @@ func sysInit() {
 
 	// redis 数据库
 	redis.RedisConn()
+
+	// CephConn
+	ceph.CephConn("config/ceph/conn.json")
 
 	// 配置路由
 	router.Router()
