@@ -6,6 +6,7 @@ require github.com/go-sql-driver/mysql v1.8.1
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible // indirect
 	github.com/ceph/go-ceph v0.27.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -16,5 +17,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/time v0.5.0 // indirect
 	gopkg.in/amz.v1 v1.0.0-20150111123259-ad23e96a31d2 // indirect
 )

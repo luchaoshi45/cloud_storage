@@ -2,22 +2,15 @@ package ceph
 
 import (
 	"cloud_storage/configurator"
-	"fmt"
 	"gopkg.in/amz.v1/aws"
 	"gopkg.in/amz.v1/s3"
-	"os"
 )
 
 var cephConn *s3.S3
 
-// CephConn : 获取ceph连接
-func CephConn(location string) {
+func init() {
 	// 1. 初始化 ceph 的一些信息
-	cephConfig, err := configurator.NewCephConfig().Parse(location)
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
+	cephConfig := configurator.GetCephConfig()
 
 	auth := aws.Auth{
 		AccessKey: cephConfig.GetAttr("AccessKey"),

@@ -10,8 +10,8 @@ import (
 
 var mySql *sql.DB
 
-func MySqlConn(location string) {
-	cmd := getConnCmd(location)
+func init() {
+	cmd := getConnCmd()
 	var err error
 	mySql, err = sql.Open("mysql", cmd)
 	if err != nil {
@@ -26,12 +26,8 @@ func MySqlConn(location string) {
 	}
 }
 
-func getConnCmd(location string) string {
-	mysqlConfig, err := configurator.NewMysqlConfig().Parse(location)
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
+func getConnCmd() string {
+	mysqlConfig := configurator.GetMysqlConfig()
 	user := mysqlConfig.GetAttr("User")
 	password := mysqlConfig.GetAttr("Password")
 	ip := mysqlConfig.GetAttr("IP")

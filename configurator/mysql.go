@@ -2,10 +2,12 @@ package configurator
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
 type MysqlConfig struct {
+	config       string
 	User         string `json:"user"`
 	Password     string `json:"password"`
 	IP           string `json:"ip"`
@@ -13,17 +15,32 @@ type MysqlConfig struct {
 	DatabaseName string `json:"databaseName"`
 }
 
-func (mc *MysqlConfig) Parse(location string) (Config, error) {
-	file, err := os.ReadFile(location)
+var mysqlConfig *MysqlConfig
+
+func init() {
+	mysqlConfig = &MysqlConfig{config: "config/mysql/master_conn.json"}
+	err := mysqlConfig.parse()
 	if err != nil {
-		return nil, err
+		fmt.Println(err.Error())
+		os.Exit(-1)
+	}
+}
+
+func GetMysqlConfig() Config {
+	return mysqlConfig
+}
+
+func (mc *MysqlConfig) parse() error {
+	file, err := os.ReadFile(mc.config)
+	if err != nil {
+		return err
 	}
 	// 解析 JSON 数据
 	err = json.Unmarshal(file, mc)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return mc, nil
+	return nil
 }
 
 func (mc *MysqlConfig) GetAttr(attr string) string {

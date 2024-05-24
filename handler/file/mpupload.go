@@ -36,7 +36,7 @@ func InitMultipartUpload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 获得 redis 的一个连接
-	rPool := redis.RedisConn()
+	rPool := redis.GetRedisPool()
 	// 2. 获得redis的一个连接
 	rConn := rPool.Get()
 	defer rConn.Close()
@@ -68,7 +68,7 @@ func UploadPart(w http.ResponseWriter, r *http.Request) {
 	chunkIndex := r.Form.Get("index")
 
 	// 2. 获得redis连接池中的一个连接
-	rPool := redis.RedisConn()
+	rPool := redis.GetRedisPool()
 	rConn := rPool.Get()
 	if rConn.Err() != nil {
 		fmt.Print(rConn.Err())
@@ -114,7 +114,7 @@ func CompleteUpload(w http.ResponseWriter, r *http.Request) {
 	filename := r.Form.Get("filename")
 
 	// 2. 获得redis连接池中的一个连接
-	rPool := redis.RedisConn()
+	rPool := redis.GetRedisPool()
 	rConn := rPool.Get()
 	defer rConn.Close()
 

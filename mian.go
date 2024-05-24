@@ -1,24 +1,12 @@
 package main
 
 import (
-	"cloud_storage/db/ceph"
-	"cloud_storage/db/mysql"
-	"cloud_storage/db/redis"
 	"cloud_storage/router"
 	"log"
 	"net/http"
 )
 
 func sysInit() {
-	// mysql 数据库
-	mysql.MySqlConn("config/mysql/master_conn.json")
-
-	// redis 数据库
-	redis.RedisConn()
-
-	// CephConn
-	ceph.CephConn("config/ceph/conn.json")
-
 	// 配置路由
 	router.Router()
 	// 设置监听的端口
