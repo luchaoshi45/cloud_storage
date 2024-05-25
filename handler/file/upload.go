@@ -2,6 +2,7 @@ package file
 
 import (
 	"cloud_storage/db/mysql"
+	"cloud_storage/db/oss"
 	"cloud_storage/file"
 	"crypto/sha1"
 	"database/sql"
@@ -70,11 +71,23 @@ func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
 		log.Println("io.Copy(newFile, file) ", err.Error())
 		return
 	}
+
+	// 计算 fileSha1
 	newFile.Seek(0, 0)
+	fileSha1 := file.FileSha1(newFile)
+
+	// 计算 Oss
+	newFile.Seek(0, 0)
+	ossPath := "oss/" + fileSha1
+	err = oss.Bucket().PutObject(ossPath, newFile)
+	if err != nil {
+		fmt.Println(err.Error())
+		w.Write([]byte("Upload failed!"))
+		return
+	}
 
 	// 更新数据库
 	tFile := mysql.NewFile()
-	fileSha1 := file.FileSha1(newFile)
 	tFile.SetAttrs(map[string]interface{}{
 		"UploadAt": time.Now().Format("2006-01-02 15:04:05"),
 		"Name":     head.Filename,

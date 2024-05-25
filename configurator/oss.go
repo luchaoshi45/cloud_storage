@@ -45,9 +45,9 @@ func (oc *OssConfig) parse() error {
 func (oc *OssConfig) GetAttr(attr string) string {
 	switch attr {
 	case "Bucket":
-		return oc.Endpoint
+		return oc.Bucket
 	case "Endpoint":
-		return oc.AccessKey
+		return oc.Endpoint
 	case "AccessKey":
 		return oc.AccessKey
 	case "AccessKeySecret":

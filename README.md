@@ -3,6 +3,8 @@ http://10.181.105.230:42200/file/upload
 http://10.181.105.230:42200/user/signup
 http://10.181.105.230:42200/user/signin
 
+http://10.181.105.230:42200/file/downloadurl?sha1=167cb9619a97d84458f789a2209887e6fd518f9e
+http://10.181.105.230:42200/file/get/meta?sha1=22d9ebe1a35871d068c5b83df46f96174d3d86e9
 http://10.181.105.230:42200/file/get/meta?sha1=22d9ebe1a35871d068c5b83df46f96174d3d86e9
 http://10.181.105.230:42200/file/download?sha1=d267485cad77dbb6d4a434bc682afd5c9acaa876
 http://10.181.105.230:42200/file/update/meta?sha1=22d9ebe1a35871d068c5b83df46f96174d3d86e9&name=hh.png

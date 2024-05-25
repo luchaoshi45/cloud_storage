@@ -32,7 +32,7 @@ func Bucket() *oss.Bucket {
 
 	if cli != nil {
 		OssConfig := configurator.GetOssConfig()
-		bucket, err := cli.Bucket(OssConfig.GetAttr("Endpoint"))
+		bucket, err := cli.Bucket(OssConfig.GetAttr("Bucket"))
 		if err != nil {
 			fmt.Println(err.Error())
 			return nil

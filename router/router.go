@@ -44,6 +44,7 @@ func Router() {
 	addEntry("/file/update/name", f.UpdateFileMeta)
 	addEntry("/file/delete", f.Delete)
 	addEntry("/file/404", f.FileNotFound)
+	addEntry("/file/downloadurl", f.DownloadURL)
 
 	// 分块上传接口
 	addEntry("/file/mpupload/init", file.InitMultipartUpload)
