@@ -9,10 +9,10 @@ go run service/transfer.go
 #### [config](config)    配置文件
 #### [configurator](configurator)    配置文件解析器
 #### [db](db)    数据库
-- [ceph](#ceph)
-- [mysql](#mysql)
-- [oss](#oss)
-- [redis](#redis)
+- [ceph](db/ceph)
+- [mysql](db/mysql)
+- [oss](db/oss)
+- [redis](db/redis)
 #### [file](file)    用户文件
 #### [handler](handler)    路由服务函数
 #### [rabbitmq](rabbitmq)    rabbitmq 消息队列 用于上传文件的异步处理
