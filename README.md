@@ -20,7 +20,6 @@ go run service/transfer.go
 #### [service](service)    两个 main 函数
 #### [static](static)    静态资源
 #### [test](test)    测试文件
-#### [tmp](tmp)    文件临时存储目录
 #### [util](file/util)    算法工具
 
 
