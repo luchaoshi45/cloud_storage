@@ -1,12 +1,14 @@
 package file
 
 import (
+	"cloud_storage/configurator"
 	"cloud_storage/db/mysql"
-	"cloud_storage/db/oss"
 	"cloud_storage/file"
+	"cloud_storage/rabbitmq"
 	"crypto/sha1"
 	"database/sql"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -79,10 +81,25 @@ func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
 	// 计算 Oss
 	newFile.Seek(0, 0)
 	ossPath := "oss/" + fileSha1
-	err = oss.Bucket().PutObject(ossPath, newFile)
-	if err != nil {
-		fmt.Println(err.Error())
-		w.Write([]byte("Upload failed!"))
+	//err = oss.Bucket().PutObject(ossPath, newFile)
+	//if err != nil {
+	//	fmt.Println(err.Error())
+	//	w.Write([]byte("Upload failed!"))
+	//	return
+	//}
+
+	data := rabbitmq.TransferData{
+		FileHash:     fileSha1,
+		CurLocation:  "tmp/" + head.Filename,
+		DestLocation: ossPath}
+	pubData, _ := json.Marshal(data)
+	cfg := configurator.GetRabbitMQConfig()
+	pubSuc := rabbitmq.Publish(
+		cfg.GetAttr("Exchange"),
+		cfg.GetAttr("RoutingKey"),
+		pubData)
+	if !pubSuc {
+		log.Println("rabbitmq.Publish ", err.Error())
 		return
 	}
 

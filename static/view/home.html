@@ -140,57 +140,49 @@
         window.location.href = '/file/upload?' + queryParams();
     }
 
-
-    // function downloadFile(durl) {
-    //     $.ajax({
-    //         url: durl,
-    //         type: "POST",
-    //         error: function (jqXHR, textStatus, errorThrown) {
-    //             if (textStatus == "error") {
-    //                 alert(textStatus + " : " + errorThrown);
-    //             } else {
-    //                 alert(textStatus);
-    //             }
-    //         },
-    //         success: function (body, textStatus, jqXHR) {
-    //             try {
-    //                 alert("文件即将下载自: " + body);
-    //                 var elemIF = document.createElement("iframe");
-    //                 elemIF.src = body;
-    //                 elemIF.style.display = "none";
-    //                 document.body.appendChild(elemIF);
-    //             } catch (e) {
-    //                 alert(e);
-    //             }
-    //         }
-    //     });
-    // }
-
-
     function downloadFile(durl, fileName) {
         $.ajax({
             url: durl,
             type: "POST",
-            responseType: 'blob', // 设置响应类型为 blob
-            success: function (blobData, textStatus, jqXHR) {
+            xhrFields: {
+                responseType: 'text'  // text
+            },
+            success: function (data, textStatus, jqXHR) {
+                const contentType = jqXHR.getResponseHeader('Content-Type');
                 try {
-                    var blob = new Blob([blobData], { type: jqXHR.getResponseHeader('Content-Type') });
-                    var url = window.URL.createObjectURL(blob); // 创建一个 URL 对象
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileName; // 这里设置下载的文件名
-                    a.click(); // 模拟点击下载链接
-                    window.URL.revokeObjectURL(url); // 释放 URL 对象
+                    if (contentType.includes('text/plain')) {
+                        try {
+                            alert("文件即将下载自: " + data);
+                            var elemIF = document.createElement("iframe");
+                            elemIF.src = data;
+                            elemIF.style.display = "none";
+                            elemIF.name=fileName;
+                            document.body.appendChild(elemIF);
+                        } catch (e) {
+                            alert(e);
+                        }
+
+                    } else if (contentType.includes('application/octet-stream')) {
+                        // 处理二进制文件下载
+                        const blob = new Blob([data], { type: contentType });
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = fileName;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                        alert("文件下载成功: " + fileName);
+                    } else {
+                        alert("未知的返回内容类型: " + contentType);
+                    }
                 } catch (e) {
-                    alert(e);
+                    alert("处理响应时出错: " + e);
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                if (textStatus == "error") {
-                    alert(textStatus + " : " + errorThrown);
-                } else {
-                    alert(textStatus);
-                }
+                alert(textStatus + " : " + errorThrown);
             }
         });
     }

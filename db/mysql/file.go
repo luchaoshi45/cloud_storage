@@ -105,6 +105,22 @@ func (f *File) Update(sha1 string, newName string) (*File, error) {
 	return f, nil
 }
 
+func (f *File) UpdateDir(sha1 string, dir string) (*File, error) {
+	// 准备 SQL 更新语句，更新指定 sha1 的记录的 Name 字段为 newName
+	stmtUpdate, err := mySql.Prepare("UPDATE File SET `dir` = ? WHERE `sha1` = ?")
+	if err != nil {
+		return nil, err
+	}
+	defer stmtUpdate.Close()
+
+	// 执行更新操作
+	_, err = stmtUpdate.Exec(dir, sha1)
+	if err != nil {
+		return nil, err
+	}
+	return f, nil
+}
+
 // Delete : 删除用户文件表
 func (f *File) Delete(sha1 string) (*File, error) {
 	// 准备 SQL 更新语句，更新指定 sha1 的记录的 Name 字段为 newName

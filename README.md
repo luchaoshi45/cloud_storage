@@ -1,3 +1,11 @@
+### 命令
+```shell
+go run service/main.go
+go run service/transfer.go
+```
+
+
+
 ### 网址
 http://10.181.105.230:42200/file/upload
 http://10.181.105.230:42200/user/signup

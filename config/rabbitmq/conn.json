@@ -1,0 +1,7 @@
+{
+  "url": "amqp://guest:guest@127.0.0.1:5672/",
+  "exchange": "fileServer.trans",
+  "oss_queue": "fileServer.trans.oss",
+  "oss_err_queue": "fileServer.trans.oss_err",
+  "routing_key": "oss"
+}
