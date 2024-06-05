@@ -7,7 +7,7 @@
 - Docker 容器化和 K8s 集群
 
 <br>
-![alt text](figure/architecture.png)
+![](figure/architecture.png)
 <br>
 
 ## [1 启动用户服务](service/README.md)
