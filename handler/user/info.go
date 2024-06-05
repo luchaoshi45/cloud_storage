@@ -3,20 +3,23 @@ package user
 import (
 	"cloud_storage/db/mysql"
 	"cloud_storage/handler"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 // Info ： 查询用户信息
-func (su *User) Info(w http.ResponseWriter, r *http.Request) {
+func (su *User) Info(c *gin.Context) {
 	// 1. 解析请求参数
-	r.ParseForm()
-	username := r.Form.Get("username")
+	username := c.Request.FormValue("username")
 
 	// 3. 查询用户信息
 	user := mysql.User{}
 	user, err := user.GetUserInfo(username)
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "GetUserInfo failed",
+			"code": -1,
+		})
 		return
 	}
 
@@ -26,5 +29,5 @@ func (su *User) Info(w http.ResponseWriter, r *http.Request) {
 		Msg:  "OK",
 		Data: user,
 	}
-	w.Write(resp.JSONBytes())
+	c.Data(http.StatusOK, "application/json", resp.JSONBytes())
 }

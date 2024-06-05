@@ -57,6 +57,7 @@ func (su *User) SignInPost(c *gin.Context) {
 			Token:    token,
 		},
 	}
+
 	c.Data(http.StatusOK, "application/json", resp.JSONBytes())
 }
 

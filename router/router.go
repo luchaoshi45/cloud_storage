@@ -2,13 +2,14 @@ package router
 
 import (
 	"cloud_storage/handler/user"
+	"cloud_storage/handler/user_file"
 	"github.com/gin-gonic/gin"
 )
 
 func Router() *gin.Engine {
 	u := user.NewUser()
 	//f := file.NewFile()
-	//uf := user_file.NewUserFile()
+	uf := user_file.NewUserFile()
 
 	// gin framework 包括Logger, Recovery
 	router := gin.Default()
@@ -22,6 +23,10 @@ func Router() *gin.Engine {
 	router.POST("/user/signin", u.SignInPost)
 	// 拦截器 下面的都需要 token 校验
 	router.Use(HttpInterceptor())
+	router.POST("/user/info", u.Info)
+
+	router.POST("/user_file/query", uf.FileQuery)
+
 	return router
 }
 
