@@ -10,6 +10,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
@@ -17,43 +18,20 @@ import (
 	"time"
 )
 
-func (f *File) Upload(w http.ResponseWriter, r *http.Request) {
-	//fmt.Print("Upload")
-	//fmt.Fprintf(w, "Upload") //这个写入到w的是输出到客户端的
-
-	if r.Method == "GET" {
-		f.showUploadPage(w)
-	} else if r.Method == "POST" {
-		f.receiveFile(w, r)
-	}
+func (f *File) ShowUploadPage(c *gin.Context) {
+	//c.Redirect(http.StatusFound, "/static/view/index.html")
+	c.File("static/view/index.html")
 }
 
-// showUploadPage
-func (f *File) showUploadPage(w http.ResponseWriter) {
-	// 读取 static/view/index.html 文件
-	data, err := os.ReadFile("static/view/index.html")
-	if err != nil {
-		_, _ = io.WriteString(w, "internel server error")
-		log.Println("os.ReadFile(\"static/view/index.html\") ", err.Error())
-	}
-
-	// 将读到的 html 文件以 string 的形式返回客户端
-	_, err = io.WriteString(w, string(data))
-	if err != nil {
-		log.Println("io.WriteString(w, string(data)) ", err.Error())
-	}
-}
-
-// receiveFile
-func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
+func (this *File) ReceiveFile(c *gin.Context) {
 
 	// 秒传
-	if this.FastUpload(w, r) {
+	if this.FastUpload(c) {
 		return
 	}
 
 	// 接收文件
-	f, head, err := r.FormFile("file")
+	f, head, err := c.Request.FormFile("file")
 	if err != nil {
 		log.Println("r.FormFile(\"file\") ", err.Error())
 		return
@@ -113,40 +91,54 @@ func (this *File) receiveFile(w http.ResponseWriter, r *http.Request) {
 		"Sha1":     fileSha1,
 	})
 	success := tFile.Insert()
+
 	if success == false {
 		// 上传失败 页面跳转
 		// 根据当前路由 重定向
-		currentRoute := r.URL.Path
-		http.Redirect(w, r, currentRoute+"/duplicate", http.StatusFound)
+		// 上传失败，重定向到错误页面
+		//currentRoute := c.Request.URL.Path
+		//c.Redirect(http.StatusFound, currentRoute+"/duplicate")
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "ReceiveFile duplicate",
+		})
+		return
+	}
+	// 上传UserFile
+	userFile := mysql.NewUserFile()
+	username := c.PostForm("username")
+	success = userFile.Insert(username, fileSha1, head.Filename, fileSize)
+	if !success {
+		// 上传失败 页面跳转
+		// 根据当前路由 重定向
+		//currentRoute := c.Request.URL.Path
+		//c.Redirect(http.StatusFound, currentRoute+"/duplicate")
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "ReceiveFile duplicate",
+		})
 	} else {
-		// 上传UserFile
-		userFile := mysql.NewUserFile()
-		username := r.Form.Get("username")
-		success = userFile.Insert(username, fileSha1, head.Filename, fileSize)
-		if !success {
-			// 上传失败 页面跳转
-			// 根据当前路由 重定向
-			currentRoute := r.URL.Path
-			http.Redirect(w, r, currentRoute+"/duplicate", http.StatusFound)
-		} else {
-			// 上传成功 页面跳转
-			// 根据当前路由 重定向
-			currentRoute := r.URL.Path
-			http.Redirect(w, r, currentRoute+"/success", http.StatusFound)
-		}
+		// 上传成功 页面跳转
+		// 根据当前路由 重定向
+		//currentRoute := c.Request.URL.Path
+		//c.Redirect(http.StatusFound, currentRoute+"/success")
+
+		c.JSON(http.StatusOK, gin.H{
+			"code":    0,
+			"message": "ReceiveFile success",
+		})
 	}
 }
 
 // FastUpload 秒传接口
-func (f *File) FastUpload(w http.ResponseWriter, r *http.Request) bool {
-	r.ParseForm()
-	// 1.1 解析请求参数
-	username := r.Form.Get("username")
+func (f *File) FastUpload(c *gin.Context) bool {
+	username := c.PostForm("username")
 
 	// 1.2 filehash
-	tf, head, err := r.FormFile("file")
+	// 接收文件
+	tf, head, err := c.Request.FormFile("file")
 	if err != nil {
-		http.Error(w, "Failed to read file from request", http.StatusBadRequest)
+		log.Println("r.FormFile(\"file\") ", err.Error())
 		return false
 	}
 	defer tf.Close()
@@ -156,7 +148,10 @@ func (f *File) FastUpload(w http.ResponseWriter, r *http.Request) bool {
 	// 将文件内容传入哈希对象
 	filesize, err := io.Copy(h, tf)
 	if err != nil {
-		http.Error(w, "Failed to read file content", http.StatusInternalServerError)
+		c.JSON(http.StatusOK, gin.H{
+			"code": -1,
+			"msg":  "Io copy err",
+		})
 		return false
 	}
 	// 计算哈希值
@@ -171,7 +166,10 @@ func (f *File) FastUpload(w http.ResponseWriter, r *http.Request) bool {
 	fileMeta, err := mysql.NewFile().Query(filehash)
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		c.JSON(http.StatusOK, gin.H{
+			"code": -1,
+			"msg":  "Query err",
+		})
 		return false
 	}
 
@@ -189,11 +187,10 @@ func (f *File) FastUpload(w http.ResponseWriter, r *http.Request) bool {
 	userFile := mysql.NewUserFile()
 	suc := userFile.Insert(username, filehash, filename, int64(filesize))
 	if suc {
-		//resp := handler.RespMsg{
-		//	Code: 0,
-		//	Msg:  "秒传成功",
-		//}
-		//w.Write(resp.JSONBytes())
+		c.JSON(http.StatusOK, gin.H{
+			"code":    0,
+			"message": "FastUpload success",
+		})
 		return true
 	}
 	//resp := handler.RespMsg{

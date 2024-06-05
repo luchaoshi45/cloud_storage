@@ -1,14 +1,14 @@
 package file
 
 import (
-	"io"
+	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 )
 
-func (f *File) UploadSuccess(w http.ResponseWriter, r *http.Request) {
-	_, err := io.WriteString(w, "uploadSuccess")
+func (f *File) UploadSuccess(c *gin.Context) {
+	// 向客户端写入响应
+	_, err := c.Writer.WriteString("uploadSuccess")
 	if err != nil {
-		log.Println("io.WriteString(w, \"uploadSuccess\") ", err.Error())
+		log.Println("c.Writer.WriteString(\"uploadSuccess\") ", err.Error())
 	}
 }

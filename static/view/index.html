@@ -39,6 +39,8 @@
 <div style="width:60%;height:30%;text-align:center;">
     <form action='#' method="post" enctype="multipart/form-data">
         <input id="file" name="file" type="file" class="file" data-msg-placeholder="选择文件">
+        <input id="token" name="token" type="hidden">
+        <input id="username" name="username" type="hidden">
     </form>
 </div>
 </body>
@@ -51,6 +53,21 @@
      * The main function to calculate message digest
      *
      */
+    console.log("ok")
+
+    $(document).ready(function(){
+        // Get token from localStorage
+        var token = localStorage.getItem("token");
+        var username = localStorage.getItem("username");
+        // Set token value to the hidden input field
+        $("#token").val(token);
+        $("#username").val(username);
+        // Submit form when file is selected
+        $("#file").change(function(){
+            $("#uploadForm").submit();
+        });
+    });
+
     function hex_sha1(s) {
         return binb2hex(core_sha1(AlignSHA1(s)));
     }

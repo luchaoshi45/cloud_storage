@@ -1,14 +1,13 @@
 package file
 
 import (
-	"io"
+	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 )
 
-func (f *File) UploadDuplicate(w http.ResponseWriter, r *http.Request) {
-	_, err := io.WriteString(w, "uploadDuplicate")
+func (f *File) UploadDuplicate(c *gin.Context) {
+	_, err := c.Writer.WriteString("uploadDuplicate")
 	if err != nil {
-		log.Println("io.WriteString(w, \"uploadDuplicate\") ", err.Error())
+		log.Println("c.Writer.WriteString(\"uploadDuplicate\") ", err.Error())
 	}
 }

@@ -4,30 +4,30 @@ import (
 	"cloud_storage/db/mysql"
 	"cloud_storage/file"
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func (f *File) UpdateFileMeta(w http.ResponseWriter, r *http.Request) {
-	// POST
-	if r.Method != "POST" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
+func (f *File) UpdateFileMeta(c *gin.Context) {
 	// ParseForm
-	r.ParseForm()
-	opType := r.Form.Get("op")
+	opType := c.Request.Form.Get("op")
 	if opType != "0" {
-		w.WriteHeader(http.StatusForbidden)
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "Forbidden opType",
+		})
 		return
 	}
-	sha1 := r.Form.Get("sha1")
-	newFileName := r.Form.Get("name")
+	sha1 := c.Request.Form.Get("sha1")
+	newFileName := c.Request.Form.Get("name")
 
 	// 得到 userFile
 	userFile, err := mysql.NewFile().Query(sha1)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -2,
+			"message": "mysql.NewFile().Query(sha1)",
+		})
 		return
 	}
 
@@ -36,22 +36,30 @@ func (f *File) UpdateFileMeta(w http.ResponseWriter, r *http.Request) {
 	// 更新 userFile 和数据库中的 Name
 	userFile, err = userFile.Update(sha1, newFileName)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -3,
+			"message": "userFile.Update(sha1, newFileName)",
+		})
 		return
 	}
 	// Rename File
 	err = file.SafeRename(oldLocation, userFile.GetLocation())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -4,
+			"message": "file.SafeRename(oldLocation, userFile.GetLocation())",
+		})
 		return
 	}
 
 	// Write
 	data, err := json.Marshal(userFile)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -5,
+			"message": "json.Marshal(userFile)",
+		})
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	c.Data(http.StatusOK, "application/json", data)
 }

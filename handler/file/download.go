@@ -3,20 +3,24 @@ package file
 import (
 	"cloud_storage/db/mysql"
 	"cloud_storage/db/oss"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 )
 
-func (f *File) Download(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	sha1 := r.Form["sha1"][0]
+func (f *File) Download(c *gin.Context) {
+	// 获取 SHA1 值
+	sha1 := c.Request.Form.Get("sha1")
 
 	// 得到 userFile
 	userFile, err := mysql.NewFile().Query(sha1)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "mysql.NewFile().Query(sha1)",
+		})
 		return
 	}
 
@@ -26,12 +30,17 @@ func (f *File) Download(w http.ResponseWriter, r *http.Request) {
 
 	if dir == "oss" {
 		signedURL := oss.DownloadURL("oss/" + sha1)
-		w.Header().Set("Content-Type", "application/text/plain")
-		w.Write([]byte(signedURL))
+		// 如果文件存储在 OSS 中，生成带签名的 URL，并返回给客户端
+		c.String(http.StatusOK, signedURL)
+		//w.Header().Set("Content-Type", "application/text/plain")
+		//w.Write([]byte(signedURL))
 	} else if dir == "tmp" {
 		file, err := os.Open(location)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			c.JSON(http.StatusOK, gin.H{
+				"code":    -2,
+				"message": "os.Open(location)",
+			})
 			return
 		}
 		defer file.Close()
@@ -39,13 +48,15 @@ func (f *File) Download(w http.ResponseWriter, r *http.Request) {
 		// 读取文件到内存
 		data, err := io.ReadAll(file)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			c.JSON(http.StatusOK, gin.H{
+				"code":    -2,
+				"message": "io.ReadAll(file)",
+			})
 			return
 		}
 
-		// 返回
-		w.Header().Set("Content-Type", "application/octet-stream")
-		w.Header().Set("Content-Disposition", "attachment; filename=\""+userFile.Name+"\"")
-		w.Write(data)
+		c.Header("Content-Type", "application/octet-stream")
+		c.Header("Content-Disposition", "attachment; filename=\""+userFile.Name+"\"")
+		c.Data(http.StatusOK, "application/octet-stream", data)
 	}
 }
