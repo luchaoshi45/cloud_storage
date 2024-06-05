@@ -1,11 +1,18 @@
 # Cloud Storage 基于微服务架构的分布式云存储系统
 
-## 用户服务集群
-```markdown
-[README.md](service/README.md)
-```
+- 基础文件上传、秒传、分块上传和断点续传
+- Ceph 集群和阿里云 OSS
+- Rabbitmq 异步处理
+- Consul 微服务
+- Docker 容器化和 K8s 集群
 
-### 目录
+<br>
+![alt text](figure/architecture.png)
+<br>
+
+## [1 启动用户服务](service/README.md)
+
+## 目录
 #### [config](../config)    配置文件
 #### [configurator](../configurator)    配置文件解析器
 #### [db](../db)    数据库
