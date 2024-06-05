@@ -81,6 +81,11 @@
     function onSignup() {
         var username = document.getElementById('username');
         var password = document.getElementById('password');
+        var passwordc = document.getElementById('passwordc');
+        if (passwordc.value != password.value){
+            alert("密码不一致");
+            return
+        }
         $.ajax({
             url: "/user/signup",
             type: "POST",
@@ -96,7 +101,7 @@
                 }
             },
             success: function (data, textStatus, jqXHR) {
-                if (data == 'SUCCESS') {
+                if (data.code == 0) {
                     // 成功后跳到登录页
                     document.getElementById("login_hint").style.display = "block";
                     setTimeout(() => {
