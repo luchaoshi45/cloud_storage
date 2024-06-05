@@ -3,27 +3,25 @@ package user
 import (
 	"cloud_storage/db/mysql"
 	"cloud_storage/file"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func (su *User) SignUp(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		//data, err := os.ReadFile("./static/view/signup.html")
-		//if err != nil {
-		//	w.WriteHeader(http.StatusInternalServerError)
-		//	return
-		//}
-		//w.Write(data)
-		http.Redirect(w, r, "/static/view/signup.html", http.StatusFound)
-		return
-	}
-	r.ParseForm()
+// SignUpGet 响应注册页面
+func (su *User) SignUpGet(c *gin.Context) {
+	c.Redirect(http.StatusFound, "/static/view/signup.html")
+}
 
-	username := r.Form.Get("username")
-	passwd := r.Form.Get("password")
+// SignUpPost 处理注册请求
+func (su *User) SignUpPost(c *gin.Context) {
+	username := c.Request.FormValue("username")
+	passwd := c.Request.FormValue("password")
 
 	if len(username) < minNameLen || len(passwd) < minPwdLen {
-		w.Write([]byte("Invalid parameter"))
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "Invalid parameter",
+			"code": -1,
+		})
 		return
 	}
 
@@ -32,8 +30,14 @@ func (su *User) SignUp(w http.ResponseWriter, r *http.Request) {
 	// 将用户信息注册到用户表中
 	suc := mysql.NewUser(username, encPasswd).SignUp()
 	if suc {
-		w.Write([]byte("SUCCESS"))
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "SignUp succeeded",
+			"code": 0,
+		})
 	} else {
-		w.Write([]byte("FAILED"))
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "SignUp failed",
+			"code": -2,
+		})
 	}
 }

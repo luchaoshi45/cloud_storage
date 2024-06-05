@@ -2,17 +2,15 @@ package main
 
 import (
 	"cloud_storage/router"
-	"log"
-	"net/http"
+	"fmt"
 )
 
 func sysInit() {
 	// 配置路由
-	router.Router()
-	// 设置监听的端口
-	err := http.ListenAndServe(":42200", nil)
+	r := router.Router()
+	err := r.Run(":42200")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err.Error())
 	}
 }
 

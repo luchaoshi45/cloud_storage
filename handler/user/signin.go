@@ -5,27 +5,30 @@ import (
 	"cloud_storage/file"
 	"cloud_storage/handler"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
 
-// SignIn : 登录接口
-func (su *User) SignIn(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		http.Redirect(w, r, "/static/view/signin.html", http.StatusFound)
-		return
-	}
+// SignIndGet 响应登录页面
+func (su *User) SignIndGet(c *gin.Context) {
+	c.Redirect(http.StatusFound, "/static/view/signin.html")
+}
 
-	r.ParseForm()
-	username := r.Form.Get("username")
-	password := r.Form.Get("password")
+// SignInPost : 处理登录请求
+func (su *User) SignInPost(c *gin.Context) {
+	username := c.Request.FormValue("username")
+	password := c.Request.FormValue("password")
 
 	encPasswd := file.Sha1([]byte(password + pwdSalt))
 
 	// 1. 校验用户名及密码
 	pwdChecked := mysql.NewUser(username, encPasswd).SignIn()
 	if !pwdChecked {
-		w.Write([]byte("FAILED"))
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "Login failed",
+			"code": -1,
+		})
 		return
 	}
 
@@ -33,7 +36,10 @@ func (su *User) SignIn(w http.ResponseWriter, r *http.Request) {
 	token := GenToken(username)
 	upRes := mysql.NewUserToken(username, token).UpdateToken()
 	if !upRes {
-		w.Write([]byte("FAILED"))
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "GenToken failed",
+			"code": -2,
+		})
 		return
 	}
 
@@ -46,12 +52,12 @@ func (su *User) SignIn(w http.ResponseWriter, r *http.Request) {
 			Username string
 			Token    string
 		}{
-			Location: "http://" + r.Host + "/static/view/home.html",
+			Location: "/static/view/home.html",
 			Username: username,
 			Token:    token,
 		},
 	}
-	w.Write(resp.JSONBytes())
+	c.Data(http.StatusOK, "application/json", resp.JSONBytes())
 }
 
 // GenToken : 生成token

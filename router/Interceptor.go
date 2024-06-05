@@ -1,24 +1,26 @@
 package router
 
 import (
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func HttpInterceptor(h http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			r.ParseForm()
-			token := r.Form.Get("token")
+func HttpInterceptor() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Request.FormValue("token")
 
-			//验证登录token是否有效
-			if !IsTokenValid(token) {
-				//w.WriteHeader(http.StatusForbidden)
-				// token校验失败则跳转到登录页面
-				http.Redirect(w, r, "/static/view/signin.html", http.StatusFound)
-				return
-			}
-			h(w, r)
-		})
+		// 验证登录token是否有效
+		if !IsTokenValid(token) {
+			c.Abort()
+			c.JSON(http.StatusOK, gin.H{
+				"msg":  "token无效",
+				"code": -1,
+			})
+			return
+		}
+
+		c.Next()
+	}
 
 }
 
