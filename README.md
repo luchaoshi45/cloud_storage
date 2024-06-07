@@ -22,9 +22,7 @@
 - [redis](../db/redis)
 #### [file](../file)    用户文件
 #### [rabbitmq](../rabbitmq)    消息队列 用于上传文件的异步处理
-#### [router](../router)    路由
-#### [service](service)    微服务方式运行
-#### [service](../service)    两个 main 函数
+#### [service](service)    微服务
 #### [static](../static)    静态资源
 #### [test](../test)    测试文件
 
