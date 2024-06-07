@@ -26,6 +26,7 @@ func Router() *gin.Engine {
 
 	// 返回上传接口地址
 	router.GET("/get/upload/entry", handler.UploadEntry)
+	router.GET("/get/download/entry", handler.DownloadEntry)
 
 	return router
 }

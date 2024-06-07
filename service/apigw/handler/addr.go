@@ -1,6 +1,7 @@
 package handler
 
 import (
+	downloadProto "cloud_storage/service/download/proto"
 	uploadProto "cloud_storage/service/upload/proto"
 	"context"
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,8 @@ import (
 )
 
 var (
-	uploadCil uploadProto.UploadService
+	uploadCil   uploadProto.UploadService
+	downloadCil downloadProto.DownloadService
 )
 
 func init() {
@@ -27,11 +29,29 @@ func init() {
 	service.Init()
 
 	uploadCil = uploadProto.NewUploadService("go.micro.service.upload", service.Client())
+	downloadCil = downloadProto.NewDownloadService("go.micro.service.download", service.Client())
 }
 
 // UploadEntry : 查询批量的文件元信息
 func UploadEntry(c *gin.Context) {
 	rpcResp, err := uploadCil.UploadEntry(context.TODO(), &uploadProto.ReqEntry{})
+
+	if err != nil {
+		log.Println(err.Error())
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":  rpcResp.Code,
+		"entry": rpcResp.Entry,
+		"msg":   "ok",
+	})
+}
+
+// DownloadEntry : 查询批量的文件元信息
+func DownloadEntry(c *gin.Context) {
+	rpcResp, err := downloadCil.DownloadEntry(context.TODO(), &downloadProto.ReqEntry{})
 
 	if err != nil {
 		log.Println(err.Error())

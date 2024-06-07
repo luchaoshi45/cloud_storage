@@ -5,13 +5,20 @@ Consul 动态选择 server 端
 
 ## 启动
 ```shell
-# account server 端
+# account rpc server
 go run service/account/main.go
 
-# account client 端 40001 端口
+# account client(40001 端口)
 go run service/apigw/main.go
-# upload client 端 40002 端口
+
+
+# upload client(40002 端口)
+# uploadEntry rpc server
 go run service/upload/main.go
+
+# download client(40003 端口)
+# downloadEntry rpc server
+go run service/download/main.go
 ```
 
 ## 测试网址

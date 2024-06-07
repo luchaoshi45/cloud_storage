@@ -27,7 +27,7 @@ func Router() *gin.Engine {
 
 	// Use之后的所有handler都会经过拦截器进行token校验
 
-	// 文件下载相关接口
+	// 文件上传相关接口
 	router.POST("/file/download", handler.Download)
 	// 秒传接口
 	return router
