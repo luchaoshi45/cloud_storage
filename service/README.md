@@ -19,6 +19,9 @@ go run service/upload/main.go
 # download client(40003 端口)
 # downloadEntry rpc server
 go run service/download/main.go
+
+# transfer client
+go run service/transfer/handler/transfer.go
 ```
 
 ## 测试网址
