@@ -1,3 +1,13 @@
+
+# Cloud Storage 基于微服务架构的分布式云存储系统
+
+<img align="right" width="80px" src="https://raw.githubusercontent.com/gin-gonic/logo/master/color.png">
+
+- 基础文件上传、秒传、分块上传和断点续传
+- Ceph 集群和阿里云 OSS
+- Rabbitmq 异步处理
+
+
 ### 命令
 ```shell
 go run service/main.go
