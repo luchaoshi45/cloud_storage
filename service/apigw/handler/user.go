@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"cloud_storage/handler"
 	"cloud_storage/service/account/proto"
 	"context"
 	"github.com/gin-gonic/gin"
@@ -153,7 +152,7 @@ func UserInfo(c *gin.Context) {
 	}
 
 	// 3. 组装并且响应用户数据
-	cliResp := handler.RespMsg{
+	cliResp := RespMsg{
 		Code: 0,
 		Msg:  "OK",
 		Data: gin.H{

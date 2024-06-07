@@ -21,10 +21,11 @@ go run service/upload/main.go
 go run service/download/main.go
 
 # transfer client
-go run service/transfer/handler/transfer.go
+go run service/transfer/main.go
 ```
 
 ## 测试网址
 http://10.181.105.230:40001/user/signup <br/>
+http://10.181.105.230:40001/user/signin <br/>
 
 

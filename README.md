@@ -21,10 +21,8 @@
 - [oss](../db/oss)
 - [redis](../db/redis)
 #### [file](../file)    用户文件
-#### [handler](../handler)    路由服务函数
 #### [rabbitmq](../rabbitmq)    消息队列 用于上传文件的异步处理
 #### [router](../router)    路由
-#### [run](run)    普通方式运行
 #### [service](service)    微服务方式运行
 #### [service](../service)    两个 main 函数
 #### [static](../static)    静态资源

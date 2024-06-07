@@ -2,8 +2,8 @@ package main
 
 import (
 	dnProto "cloud_storage/service/download/proto"
+	"cloud_storage/service/download/router"
 	dnRpc "cloud_storage/service/download/rpc"
-	"cloud_storage/service/upload/router"
 	"fmt"
 	"github.com/go-micro/plugins/v4/registry/consul"
 	"go-micro.dev/v4"

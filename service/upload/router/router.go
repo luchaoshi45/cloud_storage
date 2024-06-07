@@ -1,7 +1,7 @@
 package router
 
 import (
-	"cloud_storage/service/download/handler"
+	"cloud_storage/service/upload/handler"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +28,8 @@ func Router() *gin.Engine {
 	// Use之后的所有handler都会经过拦截器进行token校验
 
 	// 文件下载相关接口
-	router.POST("/file/download", handler.Download)
+	router.GET("/file/upload", handler.ShowUploadPage)
+	router.POST("/file/upload", handler.ReceiveFile)
 	// 秒传接口
 	return router
 }
