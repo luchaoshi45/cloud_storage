@@ -8,7 +8,7 @@
 - Consul 微服务
 - Docker 容器化和 K8s 集群
 
-<img width="1000px" src=figure/architecture.png>
+<img width="1200px" src=service/基于微服务的分布式云存储系统.png>
 
 ## [1 启动用户服务](service/README.md)
 
