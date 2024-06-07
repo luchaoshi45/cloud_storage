@@ -140,7 +140,17 @@
     }
 
     function toUploadFile() {
-        window.location.href = '/file/upload?' + queryParams();
+        $.ajax({
+            url: "/get/upload/entry?" + queryParams(),
+            type: 'GET',
+            success: function (data, textStatus, jqXHR) {
+                console.log(data)
+                window.location.href = "http://" + data.entry + '/file/upload?' + queryParams();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + " : " + errorThrown);
+            }
+        });
     }
 
     function downloadFile(durl, fileName) {

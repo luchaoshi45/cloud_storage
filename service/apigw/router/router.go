@@ -24,5 +24,8 @@ func Router() *gin.Engine {
 	// 用户文件查询
 	router.POST("/user_file/query", handler.UserFiles)
 
+	// 返回上传接口地址
+	router.GET("/get/upload/entry", handler.UploadEntry)
+
 	return router
 }
