@@ -21,7 +21,7 @@ go run service/transfer.go
 #### [static](../static)    静态资源
 #### [test](../test)    测试文件
 
-
+``transfer``
 ### 测试网址
 http://10.181.105.230:42200/file/upload <br/>
 http://10.181.105.230:42200/user/signup <br/>
