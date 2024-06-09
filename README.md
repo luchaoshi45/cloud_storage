@@ -10,7 +10,7 @@
 
 <img width="1200px" src=service/基于微服务的分布式云存储系统.png>
 
-## [1 启动用户服务](service/README.md)
+## [启动微服务](service/README.md)
 
 ## 目录
 #### [config](../config)    配置文件
