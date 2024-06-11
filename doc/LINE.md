@@ -1,6 +1,7 @@
 # TODO
-每个标题对应一页 <br>
-cloud_storage/doc 有部分文档和截图
+每个小标题对应一页 <br>
+cloud_storage/doc 有部分文档和截图 <br>
+完成负责的部分后发到群里 <br>
 
 ## PPT
 ### 1
